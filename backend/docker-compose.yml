@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: workroom-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: workroom
+      POSTGRES_USER: workroom
+      POSTGRES_PASSWORD: workroom
+    ports:
+      - "5432:5432"
+    volumes:
+      - workroom-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workroom -d workroom"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  workroom-postgres-data:
