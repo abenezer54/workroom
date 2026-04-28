@@ -48,19 +48,22 @@ func main() {
 	projectRepository := repositories.NewProjectRepository(db)
 	taskRepository := repositories.NewTaskRepository(db)
 	projectUpdateRepository := repositories.NewProjectUpdateRepository(db)
+	invoiceRepository := repositories.NewInvoiceRepository(db)
 	jwtService := services.NewJWTService(cfg.JWTSecret, cfg.JWTExpiresIn)
 	authService := services.NewAuthService(userRepository, jwtService)
 	clientService := services.NewClientService(clientRepository)
 	projectService := services.NewProjectService(projectRepository, clientRepository)
 	taskService := services.NewTaskService(taskRepository, projectRepository)
 	projectUpdateService := services.NewProjectUpdateService(projectUpdateRepository, projectRepository)
+	invoiceService := services.NewInvoiceService(invoiceRepository, clientRepository, projectRepository)
 	authHandler := handlers.NewAuthHandler(authService)
 	clientHandler := handlers.NewClientHandler(clientService)
 	projectHandler := handlers.NewProjectHandler(projectService)
 	taskHandler := handlers.NewTaskHandler(taskService)
 	projectUpdateHandler := handlers.NewProjectUpdateHandler(projectUpdateService)
+	invoiceHandler := handlers.NewInvoiceHandler(invoiceService)
 
-	registerRoutes(router, authHandler, clientHandler, projectHandler, taskHandler, projectUpdateHandler, jwtService)
+	registerRoutes(router, authHandler, clientHandler, projectHandler, taskHandler, projectUpdateHandler, invoiceHandler, jwtService)
 
 	log.Printf("workroom api listening on port %s", cfg.Port)
 	if err := router.Run(":" + cfg.Port); err != nil {
@@ -75,6 +78,7 @@ func registerRoutes(
 	projectHandler *handlers.ProjectHandler,
 	taskHandler *handlers.TaskHandler,
 	projectUpdateHandler *handlers.ProjectUpdateHandler,
+	invoiceHandler *handlers.InvoiceHandler,
 	jwtService services.JWTService,
 ) {
 	router.GET("/health", func(c *gin.Context) {
@@ -96,6 +100,7 @@ func registerRoutes(
 	routes.RegisterProjectRoutes(api, projectHandler, jwtService)
 	routes.RegisterTaskRoutes(api, taskHandler, jwtService)
 	routes.RegisterProjectUpdateRoutes(api, projectUpdateHandler, jwtService)
+	routes.RegisterInvoiceRoutes(api, invoiceHandler, jwtService)
 
 	router.NoRoute(func(c *gin.Context) {
 		response.Error(c, http.StatusNotFound, "NOT_FOUND", "Route not found", nil)

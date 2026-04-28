@@ -41,10 +41,17 @@ The backend currently includes:
 - `GET /api/v1/projects/:projectId/updates`
 - `POST /api/v1/projects/:projectId/updates`
 - `GET /api/v1/updates/recent`
+- Invoices module
+- `GET /api/v1/invoices`
+- `POST /api/v1/invoices`
+- `GET /api/v1/invoices/:id`
+- `PATCH /api/v1/invoices/:id`
+- `PATCH /api/v1/invoices/:id/status`
+- `DELETE /api/v1/invoices/:id`
 - Automatic SQL migrations on API startup
 - Local PostgreSQL Docker Compose setup
 
-Invoices, dashboards, files, email notifications, PDF generation, and AI features are intentionally not implemented yet.
+Dashboards, files, email notifications, payments, PDF generation, and AI features are intentionally not implemented yet.
 
 ## Requirements
 
@@ -381,6 +388,101 @@ Run the project updates smoke test script while the backend is running:
 
 ```sh
 ./scripts/test_project_updates.sh
+```
+
+## Invoice Endpoints
+
+Invoice write endpoints require an agency admin JWT. Client users can read only invoices tied to their own `client_id`.
+
+Create an invoice:
+
+```sh
+curl -X POST http://localhost:8080/api/v1/invoices \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{
+    "client_id": "YOUR_CLIENT_ID",
+    "project_id": "YOUR_PROJECT_ID",
+    "status": "DRAFT",
+    "issue_date": "2026-04-01",
+    "due_date": "2026-04-15",
+    "tax": 100,
+    "discount": 50,
+    "items": [
+      {
+        "description": "Website redesign",
+        "quantity": 1,
+        "unit_price": 2500
+      },
+      {
+        "description": "Client portal setup",
+        "quantity": 1,
+        "unit_price": 1200
+      }
+    ]
+  }'
+```
+
+List invoices:
+
+```sh
+curl http://localhost:8080/api/v1/invoices \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Filter invoices:
+
+```sh
+curl "http://localhost:8080/api/v1/invoices?status=DRAFT&client_id=YOUR_CLIENT_ID&project_id=YOUR_PROJECT_ID" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+View invoice with items:
+
+```sh
+curl http://localhost:8080/api/v1/invoices/YOUR_INVOICE_ID \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Update invoice and replace items:
+
+```sh
+curl -X PATCH http://localhost:8080/api/v1/invoices/YOUR_INVOICE_ID \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{
+    "tax": 50,
+    "discount": 25,
+    "items": [
+      {
+        "description": "Updated implementation work",
+        "quantity": 2,
+        "unit_price": 500
+      }
+    ]
+  }'
+```
+
+Update invoice status:
+
+```sh
+curl -X PATCH http://localhost:8080/api/v1/invoices/YOUR_INVOICE_ID/status \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{"status":"SENT"}'
+```
+
+Cancel an invoice:
+
+```sh
+curl -X DELETE http://localhost:8080/api/v1/invoices/YOUR_INVOICE_ID \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Run the invoice module smoke test script while the backend is running:
+
+```sh
+./scripts/test_invoices.sh
 ```
 
 ## Docker
