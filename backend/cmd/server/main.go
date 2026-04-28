@@ -45,13 +45,16 @@ func main() {
 
 	userRepository := repositories.NewUserRepository(db)
 	clientRepository := repositories.NewClientRepository(db)
+	projectRepository := repositories.NewProjectRepository(db)
 	jwtService := services.NewJWTService(cfg.JWTSecret, cfg.JWTExpiresIn)
 	authService := services.NewAuthService(userRepository, jwtService)
 	clientService := services.NewClientService(clientRepository)
+	projectService := services.NewProjectService(projectRepository, clientRepository)
 	authHandler := handlers.NewAuthHandler(authService)
 	clientHandler := handlers.NewClientHandler(clientService)
+	projectHandler := handlers.NewProjectHandler(projectService)
 
-	registerRoutes(router, authHandler, clientHandler, jwtService)
+	registerRoutes(router, authHandler, clientHandler, projectHandler, jwtService)
 
 	log.Printf("workroom api listening on port %s", cfg.Port)
 	if err := router.Run(":" + cfg.Port); err != nil {
@@ -63,6 +66,7 @@ func registerRoutes(
 	router *gin.Engine,
 	authHandler *handlers.AuthHandler,
 	clientHandler *handlers.ClientHandler,
+	projectHandler *handlers.ProjectHandler,
 	jwtService services.JWTService,
 ) {
 	router.GET("/health", func(c *gin.Context) {
@@ -81,6 +85,7 @@ func registerRoutes(
 	})
 	routes.RegisterAuthRoutes(api, authHandler, jwtService)
 	routes.RegisterClientRoutes(api, clientHandler, jwtService)
+	routes.RegisterProjectRoutes(api, projectHandler, jwtService)
 
 	router.NoRoute(func(c *gin.Context) {
 		response.Error(c, http.StatusNotFound, "NOT_FOUND", "Route not found", nil)

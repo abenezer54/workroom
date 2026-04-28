@@ -1,2 +1,38 @@
 docs/
 AGENTS.md
+
+# Environment files
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Local scripts and scratch files
+backend/scripts/
+*.tmp
+*.log
+cycle_with_dfs.py
+toplogical_sort_dfs.py
+toplogical_sort_kahn's.py
+
+# Go build artifacts
+bin/
+tmp/
+*.test
+coverage.out
+coverage.html
+
+# Node/frontend artifacts
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/

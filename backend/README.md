@@ -26,10 +26,16 @@ The backend currently includes:
 - `GET /api/v1/clients/:id`
 - `PATCH /api/v1/clients/:id`
 - `DELETE /api/v1/clients/:id`
+- Projects module for agency admins
+- `GET /api/v1/projects`
+- `POST /api/v1/projects`
+- `GET /api/v1/projects/:id`
+- `PATCH /api/v1/projects/:id`
+- `DELETE /api/v1/projects/:id`
 - Automatic SQL migrations on API startup
 - Local PostgreSQL Docker Compose setup
 
-Projects, tasks, invoices, dashboards, files, and project updates are intentionally not implemented yet.
+Tasks, invoices, dashboards, files, and project updates are intentionally not implemented yet.
 
 ## Requirements
 
@@ -203,6 +209,74 @@ Archive a client:
 ```sh
 curl -X DELETE http://localhost:8080/api/v1/clients/YOUR_CLIENT_ID \
   -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+## Project Endpoints
+
+All project management endpoints require an agency admin JWT. `GET /api/v1/projects/:id` also supports linked client users for read-only portal access.
+
+Create a project:
+
+```sh
+curl -X POST http://localhost:8080/api/v1/projects \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{
+    "client_id": "YOUR_CLIENT_ID",
+    "title": "Website Redesign",
+    "description": "Redesign marketing website and client onboarding pages.",
+    "status": "PLANNING",
+    "start_date": "2026-04-01",
+    "deadline": "2026-05-15",
+    "budget": 4500,
+    "progress": 0
+  }'
+```
+
+List projects:
+
+```sh
+curl http://localhost:8080/api/v1/projects \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Filter projects:
+
+```sh
+curl "http://localhost:8080/api/v1/projects?status=IN_PROGRESS&client_id=YOUR_CLIENT_ID&search=website" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+View one project:
+
+```sh
+curl http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Update a project:
+
+```sh
+curl -X PATCH http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{
+    "status": "IN_PROGRESS",
+    "progress": 25
+  }'
+```
+
+Archive a project:
+
+```sh
+curl -X DELETE http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Run the project module smoke test script while the backend is running:
+
+```sh
+./scripts/test_projects.sh
 ```
 
 ## Docker
