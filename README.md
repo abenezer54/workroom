@@ -1,116 +1,42 @@
 # Workroom
 
-Workroom is a professional client portal SaaS for agencies, freelancers, consultants, and service businesses.
+Workroom is a client portal for service businesses to manage client work in one organized place.
 
-It helps service businesses manage clients, projects, tasks, invoices, and project updates in one organized workspace, while giving clients a focused portal where they can view only their own work.
+Agencies, consultants, and independent service providers can manage clients, projects, tasks, project updates, and invoices. Clients get a focused portal where they can see only their own projects, updates, milestones, and invoices.
 
-## Status
+## What Workroom Does
 
-Current status: Planning
+- Centralizes client records, project details, tasks, updates, and invoices.
+- Gives agency admins a dashboard for active work, upcoming deadlines, recent updates, and invoice status.
+- Gives clients a private dashboard scoped to their own client record.
+- Enforces role-based access for agency admins and client users.
+- Keeps all business records scoped by agency ownership.
+- Supports demo data for local development and product walkthroughs.
 
-The project is being planned as a polished full-stack portfolio project for an Upwork profile. The goal is to show practical business software skills: authentication, role-based access, dashboards, CRUD modules, client-specific data access, relational database design, and production deployment.
+## Product Areas
 
-## Target Users
-
-| User | Description |
-| --- | --- |
-| Agency Admin | Agency owner, freelancer, consultant, or service provider who manages clients and project work |
-| Client | Customer who logs in to view only their own assigned projects, tasks, updates, and invoices |
-
-## Core Problem
-
-Small service businesses often manage client work across email, spreadsheets, chat apps, and separate invoicing tools. That makes project status, tasks, updates, and billing harder to track and less professional for clients.
-
-Workroom brings those client-facing workflows into one calm, organized portal.
-
-## MVP Features
-
-- Authentication
-- Role-based access control
-- Agency/admin dashboard
-- Client management
-- Project management
-- Task and milestone management
-- Project updates
-- Invoice management
-- Client portal
-
-## Role Permissions
-
-### Agency Admin
+### Agency Workspace
 
 Agency admins can:
 
-- Manage clients.
-- Manage projects for their own clients.
-- Manage tasks and milestones.
-- Create and manage project updates.
-- Create and manage invoices and invoice items.
-- View an admin dashboard with business summaries.
+- Manage client records.
+- Create and update projects for their clients.
+- Track project tasks and milestones.
+- Publish project updates.
+- Create invoices with line items.
+- Review dashboard summaries for clients, projects, tasks, updates, and invoices.
 
-Agency admins cannot access another agency admin's records.
+### Client Portal
 
-### Client
+Client users can:
 
-Clients can:
-
-- Log in to the client portal.
-- View only their own assigned projects.
-- View tasks and milestones for their projects.
-- View project updates for their projects.
+- Log in with a linked client account.
+- View only their assigned projects.
+- View tasks and milestones for those projects.
+- Read project updates.
 - View their own invoices.
 
-Clients cannot create, edit, archive, or delete business records in the MVP.
-
-## Data Model
-
-Planned MVP entities:
-
-- `users`
-- `clients`
-- `projects`
-- `tasks`
-- `project_updates`
-- `invoices`
-- `invoice_items`
-
-Every business record is scoped to the owning agency where appropriate. For the MVP, `agency_id` references the agency admin user ID.
-
-Examples:
-
-- `clients.agency_id`
-- `projects.agency_id`
-- `tasks.agency_id`
-- `project_updates.agency_id`
-- `invoices.agency_id`
-
-Client portal access is isolated through the authenticated client's `client_id`, so clients can only view their own data.
-
-## API Plan
-
-The backend will expose a REST API under:
-
-```txt
-/api/v1
-```
-
-Planned API areas:
-
-- Auth: register, login, current user
-- Dashboards: admin dashboard, client dashboard
-- Clients
-- Projects
-- Tasks
-- Project updates
-- Invoices and invoice items
-
-Protected requests will use:
-
-```http
-Authorization: Bearer <access_token>
-```
-
-The API will use consistent success and error responses, pagination for list endpoints, and server-side authorization for every protected route.
+Client users cannot create, edit, archive, or delete agency records.
 
 ## Tech Stack
 
@@ -135,94 +61,157 @@ The API will use consistent success and error responses, pagination for list end
 - Clean Architecture
 - Docker
 
-### Deployment
+## Backend API
 
-- Frontend: Vercel
-- Backend: Render
-- Database: Neon PostgreSQL
+The backend exposes a REST API under:
 
-## Design Direction
+```txt
+/api/v1
+```
 
-Workroom should feel calm, professional, premium, trustworthy, and practical.
+Main API areas:
 
-The visual direction avoids bright blues, gradients, glowing UI, and generic tech startup styling. The interface should feel like focused business software for real client work.
+- Auth
+- Admin dashboard
+- Client dashboard
+- Clients
+- Projects
+- Tasks
+- Project updates
+- Invoices
 
-Core design tokens:
+Protected requests use:
 
-| Token | Value |
-| --- | --- |
-| Font | Inter |
-| Primary | `#1F2937` |
-| Accent | `#6B7A5E` |
-| Background | `#F8F7F4` |
-| Surface | `#FFFFFF` |
-| Muted Surface | `#F2F0EB` |
-| Border | `#E5E7EB` |
-| Text Primary | `#111827` |
-| Text Secondary | `#4B5563` |
-| Text Muted | `#6B7280` |
+```http
+Authorization: Bearer <access_token>
+```
 
-## Out of Scope for MVP
+Responses use a consistent JSON envelope for success and error cases.
 
-These features are intentionally deferred:
+## Data Model
 
-- AI update generator
-- File upload
-- PDF invoice generation
-- Email notifications
-- Payments
-- Team members
-- Comments
-- Approvals
+Core entities:
 
-## Future Features
+- `users`
+- `clients`
+- `projects`
+- `tasks`
+- `project_updates`
+- `invoices`
+- `invoice_items`
 
-- AI-assisted project update generator
-- File uploads for project assets and invoice attachments
-- PDF invoice generation
-- Email notifications
-- Payment integration
-- Internal team members
-- Comments and client discussions
-- Approval workflows
-- Advanced reporting
-
-## Planned Roadmap
-
-1. Planning
-2. Backend foundation
-3. Authentication and permissions
-4. Core backend modules
-5. Frontend foundation
-6. Admin dashboard
-7. Client portal
-8. Testing and polish
-9. Deployment
-10. Portfolio packaging
+Agency-owned records are scoped by `agency_id`. Client portal access is derived from the authenticated user's `client_id`, so clients cannot request or view another client's data.
 
 ## Repository Structure
 
 ```txt
 workroom/
-  frontend/
   backend/
+    cmd/
+    internal/
+    migrations/
+  frontend/
+  docs/
   README.md
 ```
 
 ## Local Development
 
-Local development will be defined when implementation begins.
+### Requirements
 
-Planned local services:
+- Go 1.22+
+- Docker and Docker Compose
+- PostgreSQL, provided locally through Docker Compose
 
-- Frontend: `http://localhost:3000`
-- Backend: `http://localhost:8080`
-- PostgreSQL: `localhost:5432`
+### Backend Setup
 
-## Live Demo
+```sh
+cd backend
+cp .env.example .env
+docker compose up -d postgres
+go mod tidy
+go run ./cmd/server
+```
 
-Coming soon.
+The API runs on:
 
-## Demo Accounts
+```txt
+http://localhost:8080
+```
 
-Demo accounts will be added after deployment.
+Health check:
+
+```sh
+curl http://localhost:8080/health
+```
+
+## Demo Data
+
+Seed local demo data:
+
+```sh
+cd backend
+go run ./cmd/seed
+```
+
+Demo accounts:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Agency Admin | `admin@workroom.demo` | `password123` |
+| Client User | `client@workroom.demo` | `password123` |
+
+Seeded data includes:
+
+- Clients: Acme Studio, BrightPath Marketing, Nova Retail Group, GreenLeaf Accounting
+- Projects: Website Redesign, CRM Dashboard, Brand Landing Page, Invoice Automation
+- Tasks, project updates, invoices, and invoice line items
+
+## Useful Commands
+
+Run backend checks:
+
+```sh
+cd backend
+go test ./...
+go vet ./...
+```
+
+Run the final backend smoke check:
+
+```sh
+cd backend
+./scripts/final_backend_check.sh
+```
+
+The smoke check verifies auth, demo logins, clients, projects, tasks, project updates, invoices, dashboards, seed data, and ownership boundaries.
+
+## Environment
+
+Backend environment variables are defined in `backend/.env.example`.
+
+Key variables:
+
+| Variable | Description |
+| --- | --- |
+| `PORT` | API server port |
+| `DATABASE_URL` | PostgreSQL connection string |
+| `JWT_SECRET` | Secret used to sign JWT access tokens |
+| `JWT_EXPIRES_IN` | JWT token lifetime |
+| `CORS_ALLOWED_ORIGINS` | Allowed frontend origins |
+
+## Product Scope
+
+Workroom focuses on the core client portal workflow:
+
+- Authentication
+- Role-based access
+- Agency dashboard
+- Client dashboard
+- Client management
+- Project management
+- Task and milestone tracking
+- Project updates
+- Invoice management
+
+Features such as payments, email notifications, file uploads, PDF generation, team members, and AI-generated updates are outside the current product scope.
