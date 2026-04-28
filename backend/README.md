@@ -32,10 +32,19 @@ The backend currently includes:
 - `GET /api/v1/projects/:id`
 - `PATCH /api/v1/projects/:id`
 - `DELETE /api/v1/projects/:id`
+- Tasks/milestones module
+- `GET /api/v1/projects/:projectId/tasks`
+- `POST /api/v1/projects/:projectId/tasks`
+- `PATCH /api/v1/tasks/:id`
+- `DELETE /api/v1/tasks/:id`
+- Project updates module
+- `GET /api/v1/projects/:projectId/updates`
+- `POST /api/v1/projects/:projectId/updates`
+- `GET /api/v1/updates/recent`
 - Automatic SQL migrations on API startup
 - Local PostgreSQL Docker Compose setup
 
-Tasks, invoices, dashboards, files, and project updates are intentionally not implemented yet.
+Invoices, dashboards, files, email notifications, PDF generation, and AI features are intentionally not implemented yet.
 
 ## Requirements
 
@@ -277,6 +286,101 @@ Run the project module smoke test script while the backend is running:
 
 ```sh
 ./scripts/test_projects.sh
+```
+
+## Task Endpoints
+
+Task write endpoints require an agency admin JWT. `GET /api/v1/projects/:projectId/tasks` also supports linked client users for read-only portal access.
+
+Create a task:
+
+```sh
+curl -X POST http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID/tasks \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{
+    "title": "Finalize homepage wireframe",
+    "description": "Prepare final homepage layout for client review.",
+    "status": "TODO",
+    "priority": "HIGH",
+    "due_date": "2026-05-01"
+  }'
+```
+
+List tasks:
+
+```sh
+curl http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID/tasks \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Filter tasks:
+
+```sh
+curl "http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID/tasks?status=TODO&priority=HIGH" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Update a task:
+
+```sh
+curl -X PATCH http://localhost:8080/api/v1/tasks/YOUR_TASK_ID \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{
+    "status": "IN_PROGRESS",
+    "priority": "URGENT",
+    "due_date": "2026-05-03"
+  }'
+```
+
+Delete a task:
+
+```sh
+curl -X DELETE http://localhost:8080/api/v1/tasks/YOUR_TASK_ID \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Run the task module smoke test script while the backend is running:
+
+```sh
+./scripts/test_tasks.sh
+```
+
+## Project Update Endpoints
+
+Project update creation requires an agency admin JWT. Listing project updates also supports linked client users for read-only portal access.
+
+Create a project update:
+
+```sh
+curl -X POST http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID/updates \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN" \
+  -d '{
+    "title": "Homepage wireframe completed",
+    "content": "The homepage wireframe has been finalized and is ready for review."
+  }'
+```
+
+List project updates:
+
+```sh
+curl http://localhost:8080/api/v1/projects/YOUR_PROJECT_ID/updates \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Get recent agency updates:
+
+```sh
+curl "http://localhost:8080/api/v1/updates/recent?limit=5" \
+  -H "Authorization: Bearer YOUR_ADMIN_ACCESS_TOKEN"
+```
+
+Run the project updates smoke test script while the backend is running:
+
+```sh
+./scripts/test_project_updates.sh
 ```
 
 ## Docker

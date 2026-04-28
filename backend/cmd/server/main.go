@@ -46,15 +46,21 @@ func main() {
 	userRepository := repositories.NewUserRepository(db)
 	clientRepository := repositories.NewClientRepository(db)
 	projectRepository := repositories.NewProjectRepository(db)
+	taskRepository := repositories.NewTaskRepository(db)
+	projectUpdateRepository := repositories.NewProjectUpdateRepository(db)
 	jwtService := services.NewJWTService(cfg.JWTSecret, cfg.JWTExpiresIn)
 	authService := services.NewAuthService(userRepository, jwtService)
 	clientService := services.NewClientService(clientRepository)
 	projectService := services.NewProjectService(projectRepository, clientRepository)
+	taskService := services.NewTaskService(taskRepository, projectRepository)
+	projectUpdateService := services.NewProjectUpdateService(projectUpdateRepository, projectRepository)
 	authHandler := handlers.NewAuthHandler(authService)
 	clientHandler := handlers.NewClientHandler(clientService)
 	projectHandler := handlers.NewProjectHandler(projectService)
+	taskHandler := handlers.NewTaskHandler(taskService)
+	projectUpdateHandler := handlers.NewProjectUpdateHandler(projectUpdateService)
 
-	registerRoutes(router, authHandler, clientHandler, projectHandler, jwtService)
+	registerRoutes(router, authHandler, clientHandler, projectHandler, taskHandler, projectUpdateHandler, jwtService)
 
 	log.Printf("workroom api listening on port %s", cfg.Port)
 	if err := router.Run(":" + cfg.Port); err != nil {
@@ -67,6 +73,8 @@ func registerRoutes(
 	authHandler *handlers.AuthHandler,
 	clientHandler *handlers.ClientHandler,
 	projectHandler *handlers.ProjectHandler,
+	taskHandler *handlers.TaskHandler,
+	projectUpdateHandler *handlers.ProjectUpdateHandler,
 	jwtService services.JWTService,
 ) {
 	router.GET("/health", func(c *gin.Context) {
@@ -86,6 +94,8 @@ func registerRoutes(
 	routes.RegisterAuthRoutes(api, authHandler, jwtService)
 	routes.RegisterClientRoutes(api, clientHandler, jwtService)
 	routes.RegisterProjectRoutes(api, projectHandler, jwtService)
+	routes.RegisterTaskRoutes(api, taskHandler, jwtService)
+	routes.RegisterProjectUpdateRoutes(api, projectUpdateHandler, jwtService)
 
 	router.NoRoute(func(c *gin.Context) {
 		response.Error(c, http.StatusNotFound, "NOT_FOUND", "Route not found", nil)
