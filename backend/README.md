@@ -48,10 +48,14 @@ The backend currently includes:
 - `PATCH /api/v1/invoices/:id`
 - `PATCH /api/v1/invoices/:id/status`
 - `DELETE /api/v1/invoices/:id`
+- Dashboard summaries
+- `GET /api/v1/dashboard/admin`
+- `GET /api/v1/dashboard/client`
+- Demo data seed command
 - Automatic SQL migrations on API startup
 - Local PostgreSQL Docker Compose setup
 
-Dashboards, files, email notifications, payments, PDF generation, and AI features are intentionally not implemented yet.
+Files, email notifications, payments, PDF generation, and AI features are intentionally not implemented yet.
 
 ## Requirements
 
@@ -87,6 +91,71 @@ go run ./cmd/server
 The API automatically runs pending SQL migrations from `migrations/` on startup and records applied files in `schema_migrations`.
 
 The API listens on `http://localhost:8080` by default.
+
+## Demo Seed Data
+
+Run the seed command from the backend directory after PostgreSQL is running:
+
+```sh
+go run ./cmd/seed
+```
+
+The seed command connects using `DATABASE_URL`, runs pending SQL migrations, and upserts demo records so it can be run more than once without duplicating the known demo users, clients, projects, tasks, updates, invoices, or invoice items.
+
+Demo accounts:
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Agency admin | `admin@workroom.demo` | `password123` |
+| Client user | `client@workroom.demo` | `password123` |
+
+The client demo user is linked through the existing `users.client_id` relationship to the `Acme Studio` client record. Client portal and client dashboard queries derive access from that authenticated `client_id`; no client-supplied ownership fields are used.
+
+Seeded demo data includes:
+
+- Clients: Acme Studio, BrightPath Marketing, Nova Retail Group, GreenLeaf Accounting
+- Projects: Website Redesign, CRM Dashboard, Brand Landing Page, Invoice Automation
+- Tasks for project progress and upcoming deadlines
+- Project updates for recent activity
+- Invoices `INV-000001`, `INV-000002`, and `INV-000003` with calculated line item totals
+
+Quick demo checks:
+
+```sh
+ADMIN_TOKEN="$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@workroom.demo","password":"password123"}' \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["access_token"])')"
+
+curl http://localhost:8080/api/v1/dashboard/admin \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+curl http://localhost:8080/api/v1/clients \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+curl http://localhost:8080/api/v1/projects \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+
+curl http://localhost:8080/api/v1/invoices \
+  -H "Authorization: Bearer $ADMIN_TOKEN"
+```
+
+Client demo check:
+
+```sh
+CLIENT_TOKEN="$(curl -s -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"client@workroom.demo","password":"password123"}' \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"]["access_token"])')"
+
+curl http://localhost:8080/api/v1/dashboard/client \
+  -H "Authorization: Bearer $CLIENT_TOKEN"
+
+curl http://localhost:8080/api/v1/invoices \
+  -H "Authorization: Bearer $CLIENT_TOKEN"
+```
+
+The client user should only see data tied to the linked `Acme Studio` client record.
 
 ## Health Check
 
