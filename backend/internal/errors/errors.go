@@ -26,8 +26,24 @@ func BadRequest(message string, details interface{}) AppError {
 	return New(http.StatusBadRequest, "BAD_REQUEST", message, details)
 }
 
+func Unauthorized(message string) AppError {
+	return New(http.StatusUnauthorized, "UNAUTHORIZED", message, nil)
+}
+
+func Forbidden(message string) AppError {
+	return New(http.StatusForbidden, "FORBIDDEN", message, nil)
+}
+
 func NotFound(message string) AppError {
 	return New(http.StatusNotFound, "NOT_FOUND", message, nil)
+}
+
+func Conflict(message string) AppError {
+	return New(http.StatusConflict, "CONFLICT", message, nil)
+}
+
+func Validation(message string, details interface{}) AppError {
+	return New(http.StatusUnprocessableEntity, "VALIDATION_ERROR", message, details)
 }
 
 func Internal(message string) AppError {

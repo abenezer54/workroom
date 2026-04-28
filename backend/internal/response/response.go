@@ -15,7 +15,7 @@ type SuccessResponse struct {
 
 type ErrorBody struct {
 	Code    string      `json:"code"`
-	Message string     `json:"message"`
+	Message string      `json:"message"`
 	Details interface{} `json:"details,omitempty"`
 }
 

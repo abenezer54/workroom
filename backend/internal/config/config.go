@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -12,6 +13,8 @@ type Config struct {
 	AppEnv             string
 	Port               string
 	DatabaseURL        string
+	JWTSecret          string
+	JWTExpiresIn       time.Duration
 	CORSAllowedOrigins []string
 }
 
@@ -24,6 +27,8 @@ func Load() Config {
 		AppEnv:             getEnv("APP_ENV", "development"),
 		Port:               getEnv("PORT", "8080"),
 		DatabaseURL:        getEnv("DATABASE_URL", "postgres://workroom:workroom@localhost:5432/workroom?sslmode=disable"),
+		JWTSecret:          getEnv("JWT_SECRET", "change-me-local-dev-secret"),
+		JWTExpiresIn:       getDurationEnv("JWT_EXPIRES_IN", 24*time.Hour),
 		CORSAllowedOrigins: splitCSV(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")),
 	}
 }
@@ -49,4 +54,19 @@ func splitCSV(value string) []string {
 	}
 
 	return items
+}
+
+func getDurationEnv(key string, fallback time.Duration) time.Duration {
+	value := strings.TrimSpace(os.Getenv(key))
+	if value == "" {
+		return fallback
+	}
+
+	duration, err := time.ParseDuration(value)
+	if err != nil {
+		log.Printf("invalid duration for %s, using default: %v", key, fallback)
+		return fallback
+	}
+
+	return duration
 }

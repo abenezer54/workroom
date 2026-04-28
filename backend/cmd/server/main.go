@@ -8,8 +8,12 @@ import (
 
 	"workroom/backend/internal/config"
 	"workroom/backend/internal/database"
+	"workroom/backend/internal/handlers"
 	"workroom/backend/internal/middleware"
+	"workroom/backend/internal/repositories"
 	"workroom/backend/internal/response"
+	"workroom/backend/internal/routes"
+	"workroom/backend/internal/services"
 )
 
 func main() {
@@ -30,12 +34,21 @@ func main() {
 	}
 	defer sqlDB.Close()
 
+	if err := database.RunMigrations(db, "migrations"); err != nil {
+		log.Fatalf("failed to run database migrations: %v", err)
+	}
+
 	router := gin.New()
 	router.Use(middleware.Logger())
 	router.Use(gin.Recovery())
 	router.Use(middleware.CORS(cfg.CORSAllowedOrigins))
 
-	registerRoutes(router)
+	userRepository := repositories.NewUserRepository(db)
+	jwtService := services.NewJWTService(cfg.JWTSecret, cfg.JWTExpiresIn)
+	authService := services.NewAuthService(userRepository, jwtService)
+	authHandler := handlers.NewAuthHandler(authService)
+
+	registerRoutes(router, authHandler, jwtService)
 
 	log.Printf("workroom api listening on port %s", cfg.Port)
 	if err := router.Run(":" + cfg.Port); err != nil {
@@ -43,7 +56,7 @@ func main() {
 	}
 }
 
-func registerRoutes(router *gin.Engine) {
+func registerRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, jwtService services.JWTService) {
 	router.GET("/health", func(c *gin.Context) {
 		response.OK(c, gin.H{
 			"status":  "ok",
@@ -58,6 +71,7 @@ func registerRoutes(router *gin.Engine) {
 			"service": "workroom-api",
 		})
 	})
+	routes.RegisterAuthRoutes(api, authHandler, jwtService)
 
 	router.NoRoute(func(c *gin.Context) {
 		response.Error(c, http.StatusNotFound, "NOT_FOUND", "Route not found", nil)
