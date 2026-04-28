@@ -44,11 +44,14 @@ func main() {
 	router.Use(middleware.CORS(cfg.CORSAllowedOrigins))
 
 	userRepository := repositories.NewUserRepository(db)
+	clientRepository := repositories.NewClientRepository(db)
 	jwtService := services.NewJWTService(cfg.JWTSecret, cfg.JWTExpiresIn)
 	authService := services.NewAuthService(userRepository, jwtService)
+	clientService := services.NewClientService(clientRepository)
 	authHandler := handlers.NewAuthHandler(authService)
+	clientHandler := handlers.NewClientHandler(clientService)
 
-	registerRoutes(router, authHandler, jwtService)
+	registerRoutes(router, authHandler, clientHandler, jwtService)
 
 	log.Printf("workroom api listening on port %s", cfg.Port)
 	if err := router.Run(":" + cfg.Port); err != nil {
@@ -56,7 +59,12 @@ func main() {
 	}
 }
 
-func registerRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, jwtService services.JWTService) {
+func registerRoutes(
+	router *gin.Engine,
+	authHandler *handlers.AuthHandler,
+	clientHandler *handlers.ClientHandler,
+	jwtService services.JWTService,
+) {
 	router.GET("/health", func(c *gin.Context) {
 		response.OK(c, gin.H{
 			"status":  "ok",
@@ -72,6 +80,7 @@ func registerRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, jwtSe
 		})
 	})
 	routes.RegisterAuthRoutes(api, authHandler, jwtService)
+	routes.RegisterClientRoutes(api, clientHandler, jwtService)
 
 	router.NoRoute(func(c *gin.Context) {
 		response.Error(c, http.StatusNotFound, "NOT_FOUND", "Route not found", nil)
