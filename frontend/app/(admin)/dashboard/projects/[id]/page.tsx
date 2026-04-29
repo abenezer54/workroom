@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ProjectUpdateFormModal } from "@/components/project-updates/project-update-form-modal";
 import { ProjectFormModal } from "@/components/projects/project-form-modal";
@@ -42,6 +42,7 @@ import {
 } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api/client";
+import { usePageTitle } from "@/lib/page-title-context";
 import { getClients, type Client } from "@/lib/api/clients";
 import {
   createProjectUpdate,
@@ -95,6 +96,10 @@ export default function ProjectDetailPage() {
   });
 
   const project = projectQuery.data;
+  const { setPageTitle } = usePageTitle();
+  useEffect(() => {
+    if (project?.title) setPageTitle(project.title);
+  }, [project?.title, setPageTitle]);
   const clients = useMemo(() => clientsQuery.data ?? [], [clientsQuery.data]);
   const clientMap = useMemo(() => {
     return new Map(clients.map((client) => [client.id, client]));

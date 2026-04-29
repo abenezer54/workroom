@@ -11,6 +11,7 @@ import {
   Plus,
   RefreshCw,
   Search,
+  SlidersHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -27,7 +28,6 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { WorkspaceToolbar } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { ApiError } from "@/lib/api/client";
 import { getClients, type Client } from "@/lib/api/clients";
@@ -227,45 +227,42 @@ export default function ProjectsPage() {
       />
 
       <WorkspaceToolbar>
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px_260px]">
-          <div className="space-y-2">
-            <Label htmlFor="project-search">Search</Label>
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
-                aria-hidden="true"
-              />
-              <Input
-                className="pl-9"
-                id="project-search"
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search project title"
-                value={search}
-              />
-            </div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex-1">
+            <Search
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <Input
+              className="pl-9"
+              id="project-search"
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search project title"
+              value={search}
+            />
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="project-status">Status</Label>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">
+            <SlidersHorizontal
+              className="h-4 w-4 shrink-0 text-muted-foreground"
+              aria-hidden="true"
+            />
             <Select
+              className="w-40"
               id="project-status"
               onChange={(event) =>
                 setStatus(event.target.value as StatusFilter)
               }
               value={status}
             >
-              <option value="ALL">All active statuses</option>
+              <option value="ALL">All statuses</option>
               {PROJECT_STATUSES.map((projectStatus) => (
                 <option key={projectStatus} value={projectStatus}>
                   {formatStatus(projectStatus)}
                 </option>
               ))}
             </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="project-client">Client</Label>
             <Select
+              className="w-48"
               disabled={clientsQuery.isLoading}
               id="project-client"
               onChange={(event) => setClientId(event.target.value)}

@@ -29,6 +29,10 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <Badge variant={variant}>
+      <span
+        className="mr-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-current"
+        aria-hidden="true"
+      />
       {status
         .toLowerCase()
         .split("_")

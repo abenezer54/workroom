@@ -1,29 +1,29 @@
 import type { LucideIcon } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
-
 type EmptyStateProps = {
   title: string;
   description: string;
   icon?: LucideIcon;
 };
 
-export function EmptyState({ title, description, icon: Icon }: EmptyStateProps) {
+export function EmptyState({
+  title,
+  description,
+  icon: Icon,
+}: EmptyStateProps) {
   return (
-    <Card className="border-dashed bg-card/70">
-      <CardContent className="flex flex-col items-center justify-center gap-3 px-6 py-12 text-center">
-        {Icon ? (
-          <span className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground">
-            <Icon className="h-5 w-5" aria-hidden="true" />
-          </span>
-        ) : null}
-        <div className="space-y-1">
-          <h2 className="text-base font-semibold text-foreground">{title}</h2>
-          <p className="max-w-md text-sm leading-6 text-muted-foreground">
-            {description}
-          </p>
+    <div className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+      {Icon ? (
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-surface-2 text-muted-foreground">
+          <Icon className="h-6 w-6" aria-hidden="true" />
         </div>
-      </CardContent>
-    </Card>
+      ) : null}
+      <div className="space-y-1.5">
+        <h2 className="text-base font-semibold text-foreground">{title}</h2>
+        <p className="max-w-sm text-sm leading-6 text-muted-foreground">
+          {description}
+        </p>
+      </div>
+    </div>
   );
 }

@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import {
   errorMessage,
@@ -64,6 +64,10 @@ export default function ClientProjectDetailPage() {
   });
 
   const project = projectQuery.data;
+  const { setPageTitle } = usePageTitle();
+  useEffect(() => {
+    if (project?.title) setPageTitle(project.title);
+  }, [project?.title, setPageTitle]);
   const tasks = tasksQuery.data ?? [];
   const updates = useMemo(
     () =>

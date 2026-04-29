@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { CheckSquare, ExternalLink, RefreshCw } from "lucide-react";
+import { CheckSquare, ExternalLink, RefreshCw, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -14,7 +14,6 @@ import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { WorkspaceToolbar } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { ApiError } from "@/lib/api/client";
 import {
@@ -104,20 +103,20 @@ export default function TasksPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        description="Track milestones and work items across all active projects."
+        description="Track milestones and work items across all active projects. To create or edit tasks, open the project."
         title="Tasks"
       />
 
-      <div className="rounded-md border border-info-border bg-info-soft px-4 py-3 text-sm text-info">
-        Tasks are created and edited inside each project.
-      </div>
-
       <WorkspaceToolbar>
-        <div className="grid gap-4 md:grid-cols-2">
-          <FilterSelect
+        <div className="flex flex-wrap items-center gap-2">
+          <SlidersHorizontal
+            className="h-4 w-4 shrink-0 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Select
+            className="w-40"
             id="task-status"
-            label="Status"
-            onChange={(value) => setStatus(value as StatusFilter)}
+            onChange={(event) => setStatus(event.target.value as StatusFilter)}
             value={status}
           >
             <option value="ALL">All statuses</option>
@@ -126,11 +125,11 @@ export default function TasksPage() {
                 {formatStatus(item)}
               </option>
             ))}
-          </FilterSelect>
-          <FilterSelect
+          </Select>
+          <Select
+            className="w-40"
             id="task-priority"
-            label="Priority"
-            onChange={(value) => setPriority(value as PriorityFilter)}
+            onChange={(event) => setPriority(event.target.value as PriorityFilter)}
             value={priority}
           >
             <option value="ALL">All priorities</option>
@@ -139,7 +138,7 @@ export default function TasksPage() {
                 {formatStatus(item)}
               </option>
             ))}
-          </FilterSelect>
+          </Select>
         </div>
       </WorkspaceToolbar>
 

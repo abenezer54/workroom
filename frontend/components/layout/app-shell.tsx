@@ -3,6 +3,7 @@
 import {
   BriefcaseBusiness,
   CheckSquare,
+  ChevronRight,
   FileText,
   Home,
   Inbox,
@@ -15,10 +16,11 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { AppLogo } from "@/components/shared/app-logo";
 import { Button } from "@/components/ui/button";
+import { usePageTitle } from "@/lib/page-title-context";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useAuth } from "@/lib/auth/auth-provider";
 import { cn } from "@/lib/utils";
@@ -45,6 +47,30 @@ const clientNavItems: NavItem[] = [
   { label: "Invoices", href: "/client/invoices", icon: FileText },
 ];
 
+function buildBreadcrumbs(
+  pathname: string,
+  navItems: NavItem[],
+  pageTitle: string | null,
+): { label: string; href?: string }[] {
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length <= 1) return [];
+
+  const [rootSegment, sectionSegment] = segments;
+  const sectionHref = `/${rootSegment}/${sectionSegment}`;
+  const sectionItem = navItems.find((item) => item.href === sectionHref);
+
+  if (!sectionItem) return [];
+
+  if (segments.length === 2) {
+    return [{ label: sectionItem.label }];
+  }
+
+  return [
+    { label: sectionItem.label, href: sectionHref },
+    { label: pageTitle ?? "\u2026" },
+  ];
+}
+
 type AppShellProps = {
   children: ReactNode;
   variant: "admin" | "client";
@@ -58,6 +84,12 @@ export function AppShell({ children, variant }: AppShellProps) {
   const navItems = variant === "admin" ? adminNavItems : clientNavItems;
   const workspaceLabel =
     variant === "admin" ? "Agency workspace" : "Client portal";
+
+  const { pageTitle, setPageTitle } = usePageTitle();
+  useEffect(() => {
+    setPageTitle(null);
+  }, [pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+  const breadcrumbs = buildBreadcrumbs(pathname, navItems, pageTitle);
 
   const initials = (user?.name ?? "W")
     .split(" ")
@@ -190,10 +222,44 @@ export function AppShell({ children, variant }: AppShellProps) {
               </Button>
               <AppLogo />
             </div>
+            {breadcrumbs.length > 0 && (
+              <nav
+                aria-label="Breadcrumb"
+                className="hidden items-center gap-1 text-sm lg:flex"
+              >
+                {breadcrumbs.map((crumb, i) => (
+                  <span key={i} className="flex items-center gap-1">
+                    {i > 0 && (
+                      <ChevronRight
+                        className="h-3.5 w-3.5 text-muted-foreground/40"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {crumb.href ? (
+                      <Link
+                        href={crumb.href}
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {crumb.label}
+                      </Link>
+                    ) : (
+                      <span className="font-medium text-foreground">
+                        {crumb.label}
+                      </span>
+                    )}
+                  </span>
+                ))}
+              </nav>
+            )}
           </div>
         </header>
-        <main className="mx-auto w-full max-w-[1480px] px-4 py-6 sm:px-6 lg:px-8">
-          {children}
+        <main className="mx-auto w-full max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8">
+          <div
+            key={pathname}
+            className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
+          >
+            {children}
+          </div>
         </main>
       </div>
     </div>

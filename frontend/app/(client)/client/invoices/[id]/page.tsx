@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import {
   errorMessage,
@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getClientInvoice, getClientProjects } from "@/lib/api/client-portal";
+import { usePageTitle } from "@/lib/page-title-context";
 
 export default function ClientInvoiceDetailPage() {
   const params = useParams<{ id: string }>();
@@ -57,6 +58,10 @@ export default function ClientInvoiceDetailPage() {
   );
 
   const invoice = invoiceQuery.data;
+  const { setPageTitle } = usePageTitle();
+  useEffect(() => {
+    if (invoice?.invoice_number) setPageTitle(invoice.invoice_number);
+  }, [invoice?.invoice_number, setPageTitle]);
   const project = invoice?.project_id
     ? projectMap.get(invoice.project_id)
     : undefined;

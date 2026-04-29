@@ -20,13 +20,13 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        "flex items-start justify-between gap-4 p-4 transition-colors hover:bg-surface-2/35",
+        "flex items-start justify-between gap-4 p-5 transition-colors hover:bg-surface-2/35",
         className,
       )}
     >
       <div className="min-w-0 space-y-1.5">
-        <p className="text-xs font-medium text-muted-foreground">{label}</p>
-        <p className="text-xl font-semibold text-foreground">{value}</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
+        <p className="text-2xl font-semibold tabular-nums text-foreground">{value}</p>
         {helper ? (
           <p className="text-xs leading-5 text-muted-foreground">{helper}</p>
         ) : null}
