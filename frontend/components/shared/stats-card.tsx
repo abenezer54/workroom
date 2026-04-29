@@ -25,8 +25,12 @@ export function StatsCard({
       )}
     >
       <div className="min-w-0 space-y-1.5">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
-        <p className="text-2xl font-semibold tabular-nums text-foreground">{value}</p>
+        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          {label}
+        </p>
+        <p className="text-2xl font-semibold tabular-nums text-foreground">
+          {value}
+        </p>
         {helper ? (
           <p className="text-xs leading-5 text-muted-foreground">{helper}</p>
         ) : null}

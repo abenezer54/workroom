@@ -2,7 +2,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { CheckSquare, ExternalLink, RefreshCw, SlidersHorizontal } from "lucide-react";
+import {
+  CheckSquare,
+  ExternalLink,
+  RefreshCw,
+  SlidersHorizontal,
+} from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
@@ -129,7 +134,9 @@ export default function TasksPage() {
           <Select
             className="w-40"
             id="task-priority"
-            onChange={(event) => setPriority(event.target.value as PriorityFilter)}
+            onChange={(event) =>
+              setPriority(event.target.value as PriorityFilter)
+            }
             value={priority}
           >
             <option value="ALL">All priorities</option>

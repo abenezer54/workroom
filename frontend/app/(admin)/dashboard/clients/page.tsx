@@ -2,7 +2,15 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Archive, Edit2, Plus, RefreshCw, Search, SlidersHorizontal, Users } from "lucide-react";
+import {
+  Archive,
+  Edit2,
+  Plus,
+  RefreshCw,
+  Search,
+  SlidersHorizontal,
+  Users,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
