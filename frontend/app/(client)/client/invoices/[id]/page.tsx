@@ -1,0 +1,195 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, ReceiptText } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useMemo } from "react";
+
+import {
+  DetailItem,
+  errorMessage,
+  formatCurrency,
+  formatDate,
+  PortalSectionError,
+} from "@/components/client-portal/portal-helpers";
+import { LoadingState } from "@/components/shared/loading-state";
+import { PageHeader } from "@/components/shared/page-header";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  getClientInvoice,
+  getClientProjects,
+} from "@/lib/api/client-portal";
+
+export default function ClientInvoiceDetailPage() {
+  const params = useParams<{ id: string }>();
+  const invoiceId = params.id;
+
+  const invoiceQuery = useQuery({
+    queryKey: ["client-invoice", invoiceId],
+    queryFn: () => getClientInvoice(invoiceId),
+  });
+
+  const projectsQuery = useQuery({
+    queryKey: ["client-projects", "invoice-detail-options"],
+    queryFn: () => getClientProjects(),
+  });
+
+  const projectMap = useMemo(
+    () =>
+      new Map((projectsQuery.data ?? []).map((project) => [project.id, project])),
+    [projectsQuery.data],
+  );
+
+  const invoice = invoiceQuery.data;
+  const project = invoice?.project_id
+    ? projectMap.get(invoice.project_id)
+    : undefined;
+  const loadError = invoiceQuery.error ?? projectsQuery.error;
+
+  if (invoiceQuery.isLoading || projectsQuery.isLoading) {
+    return <LoadingState label="Loading invoice" />;
+  }
+
+  if (loadError || !invoice) {
+    return (
+      <div className="space-y-4">
+        <Button asChild type="button" variant="secondary">
+          <Link href="/client/invoices">
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Back to invoices
+          </Link>
+        </Button>
+        <PortalSectionError
+          message={errorMessage(loadError) ?? "The invoice could not be loaded."}
+          onRetry={() => {
+            invoiceQuery.refetch();
+            projectsQuery.refetch();
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        actions={
+          <Button asChild type="button" variant="secondary">
+            <Link href="/client/invoices">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              Back to invoices
+            </Link>
+          </Button>
+        }
+        description="Read-only invoice details and line items."
+        title={invoice.invoice_number}
+      />
+
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <Card>
+          <CardHeader>
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>Invoice Details</CardTitle>
+              <StatusBadge status={invoice.status} />
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <DetailItem label="Project" value={project?.title ?? "No project"} />
+              <DetailItem label="Issue date" value={formatDate(invoice.issue_date)} />
+              <DetailItem label="Due date" value={formatDate(invoice.due_date)} />
+              <DetailItem label="Status" value={formatStatus(invoice.status)} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Total</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-3 rounded-md border border-border bg-muted px-4 py-4">
+              <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent-soft text-accent">
+                <ReceiptText className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-2xl font-semibold text-foreground">
+                  {formatCurrency(invoice.total)}
+                </p>
+                <p className="text-xs text-muted-foreground">Invoice total</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Line Items</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-hidden rounded-md border border-border">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead className="bg-muted text-xs font-medium uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-3">Description</th>
+                  <th className="px-4 py-3">Quantity</th>
+                  <th className="px-4 py-3">Unit Price</th>
+                  <th className="px-4 py-3 text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {(invoice.items ?? []).map((item) => (
+                  <tr key={item.id}>
+                    <td className="px-4 py-3 text-foreground">
+                      {item.description}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {item.quantity}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {formatCurrency(item.unit_price)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-medium text-foreground">
+                      {formatCurrency(item.amount)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="ml-auto mt-5 max-w-sm space-y-3">
+            <TotalRow label="Subtotal" value={formatCurrency(invoice.subtotal)} />
+            <TotalRow label="Tax" value={formatCurrency(invoice.tax)} />
+            <TotalRow label="Discount" value={formatCurrency(invoice.discount)} />
+            <div className="flex items-center justify-between border-t border-border pt-3 text-base font-semibold text-foreground">
+              <span>Total</span>
+              <span>{formatCurrency(invoice.total)}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function TotalRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-medium text-foreground">{value}</span>
+    </div>
+  );
+}
+
+function formatStatus(status: string) {
+  return status
+    .toLowerCase()
+    .split("_")
+    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .join(" ");
+}

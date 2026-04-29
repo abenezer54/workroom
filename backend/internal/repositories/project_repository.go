@@ -18,6 +18,7 @@ type ProjectFilters struct {
 
 type ProjectRepository interface {
 	ListByAgency(agencyID uuid.UUID, filters ProjectFilters) ([]models.Project, error)
+	ListByClient(clientID uuid.UUID, filters ProjectFilters) ([]models.Project, error)
 	Create(project *models.Project) error
 	FindByIDAndAgency(id uuid.UUID, agencyID uuid.UUID) (*models.Project, error)
 	FindByIDAndClient(id uuid.UUID, clientID uuid.UUID) (*models.Project, error)
@@ -44,6 +45,28 @@ func (r *projectRepository) ListByAgency(agencyID uuid.UUID, filters ProjectFilt
 	}
 	if filters.ClientID != nil {
 		query = query.Where("client_id = ?", *filters.ClientID)
+	}
+
+	search := strings.TrimSpace(filters.Search)
+	if search != "" {
+		query = query.Where("LOWER(title) LIKE ?", "%"+strings.ToLower(search)+"%")
+	}
+
+	if err := query.Order("created_at DESC").Find(&projects).Error; err != nil {
+		return nil, err
+	}
+
+	return projects, nil
+}
+
+func (r *projectRepository) ListByClient(clientID uuid.UUID, filters ProjectFilters) ([]models.Project, error) {
+	var projects []models.Project
+
+	query := r.db.Where("client_id = ?", clientID)
+	if filters.Status != nil {
+		query = query.Where("status = ?", *filters.Status)
+	} else {
+		query = query.Where("status <> ?", models.ProjectStatusArchived)
 	}
 
 	search := strings.TrimSpace(filters.Search)

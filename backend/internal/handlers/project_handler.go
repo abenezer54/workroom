@@ -21,24 +21,43 @@ func NewProjectHandler(projects services.ProjectService) *ProjectHandler {
 }
 
 func (h *ProjectHandler) List(c *gin.Context) {
-	agencyID, ok := agencyIDFromContext(c)
-	if !ok {
-		return
-	}
-
 	var query dto.ProjectListQuery
 	if err := c.ShouldBindQuery(&query); err != nil {
 		respondValidationError(c, err)
 		return
 	}
 
-	projects, err := h.projects.List(agencyID, query)
-	if err != nil {
-		respondAppError(c, err)
+	role, ok := roleFromContext(c)
+	if !ok {
 		return
 	}
 
-	response.OK(c, projects)
+	switch role {
+	case models.RoleAgencyAdmin:
+		agencyID, ok := agencyIDFromContext(c)
+		if !ok {
+			return
+		}
+		projects, err := h.projects.List(agencyID, query)
+		if err != nil {
+			respondAppError(c, err)
+			return
+		}
+		response.OK(c, projects)
+	case models.RoleClient:
+		clientID, ok := clientIDFromContext(c)
+		if !ok {
+			return
+		}
+		projects, err := h.projects.ListForClient(clientID, query)
+		if err != nil {
+			respondAppError(c, err)
+			return
+		}
+		response.OK(c, projects)
+	default:
+		response.Error(c, http.StatusForbidden, "FORBIDDEN", "Permission denied", nil)
+	}
 }
 
 func (h *ProjectHandler) Create(c *gin.Context) {

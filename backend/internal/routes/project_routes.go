@@ -12,7 +12,7 @@ import (
 func RegisterProjectRoutes(api *gin.RouterGroup, handler *handlers.ProjectHandler, jwtService services.JWTService) {
 	projects := api.Group("/projects")
 	projects.Use(middleware.Auth(jwtService))
-	projects.GET("", middleware.RequireRole(models.RoleAgencyAdmin), handler.List)
+	projects.GET("", middleware.RequireRole(models.RoleAgencyAdmin, models.RoleClient), handler.List)
 	projects.POST("", middleware.RequireRole(models.RoleAgencyAdmin), handler.Create)
 	projects.GET("/:id", middleware.RequireRole(models.RoleAgencyAdmin, models.RoleClient), handler.GetByID)
 	projects.PATCH("/:id", middleware.RequireRole(models.RoleAgencyAdmin), handler.Update)

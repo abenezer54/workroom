@@ -14,6 +14,7 @@ import (
 
 type ProjectService interface {
 	List(agencyID uuid.UUID, query dto.ProjectListQuery) ([]dto.ProjectResponse, error)
+	ListForClient(clientID uuid.UUID, query dto.ProjectListQuery) ([]dto.ProjectResponse, error)
 	Create(agencyID uuid.UUID, req dto.CreateProjectRequest) (*dto.ProjectResponse, error)
 	GetForAgency(agencyID uuid.UUID, projectID uuid.UUID) (*dto.ProjectResponse, error)
 	GetForClient(clientID uuid.UUID, projectID uuid.UUID) (*dto.ProjectResponse, error)
@@ -51,6 +52,24 @@ func (s *projectService) List(agencyID uuid.UUID, query dto.ProjectListQuery) ([
 	}
 
 	projects, err := s.projects.ListByAgency(agencyID, filters)
+	if err != nil {
+		return nil, apperrors.Internal("Could not list projects")
+	}
+
+	return dto.ToProjectResponses(projects), nil
+}
+
+func (s *projectService) ListForClient(clientID uuid.UUID, query dto.ProjectListQuery) ([]dto.ProjectResponse, error) {
+	filters := repositories.ProjectFilters{
+		Search: strings.TrimSpace(query.Search),
+	}
+
+	if query.Status != "" {
+		status := models.ProjectStatus(query.Status)
+		filters.Status = &status
+	}
+
+	projects, err := s.projects.ListByClient(clientID, filters)
 	if err != nil {
 		return nil, apperrors.Internal("Could not list projects")
 	}

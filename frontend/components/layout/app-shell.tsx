@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  BarChart3,
   BriefcaseBusiness,
   CheckSquare,
   FileText,
@@ -41,7 +40,6 @@ const clientNavItems: NavItem[] = [
   { label: "Overview", href: "/client", icon: Home },
   { label: "Projects", href: "/client/projects", icon: BriefcaseBusiness },
   { label: "Invoices", href: "/client/invoices", icon: FileText },
-  { label: "Updates", href: "/client/updates", icon: BarChart3 },
 ];
 
 type AppShellProps = {
