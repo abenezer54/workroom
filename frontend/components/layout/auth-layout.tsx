@@ -10,8 +10,8 @@ type AuthLayoutProps = {
 
 export function AuthLayout({ title, description, children }: AuthLayoutProps) {
   return (
-    <main className="linear-app flex min-h-screen bg-background">
-      <section className="linear-sidebar hidden flex-1 border-r border-sidebar-border bg-sidebar px-10 py-8 lg:flex lg:flex-col">
+    <main className="wr-app flex min-h-screen bg-background">
+      <section className="wr-sidebar hidden flex-1 border-r border-sidebar-border bg-sidebar px-10 py-8 lg:flex lg:flex-col">
         <AppLogo variant="dark" />
         <div className="mt-auto max-w-md space-y-4 pb-8">
           <p className="text-sm font-medium text-sidebar-muted">

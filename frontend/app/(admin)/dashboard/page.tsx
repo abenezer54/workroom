@@ -12,14 +12,24 @@ import {
 } from "lucide-react";
 
 import { ErrorState } from "@/components/shared/error-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import {
+  DashboardSkeleton,
+  LoadingState,
+} from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { ProgressBar } from "@/components/shared/progress-bar";
 import { StatsCard } from "@/components/shared/stats-card";
 import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  WorkspaceList,
+  WorkspaceListRow,
+  WorkspaceSection,
+  WorkspaceSectionContent,
+  WorkspaceSectionHeader,
+  WorkspaceSectionTitle,
+} from "@/components/shared/workspace-section";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -44,7 +54,7 @@ export default function DashboardPage() {
   });
 
   if (dashboardQuery.isLoading) {
-    return <LoadingState label="Loading dashboard" />;
+    return <DashboardSkeleton />;
   }
 
   if (dashboardQuery.isError) {
@@ -69,7 +79,7 @@ export default function DashboardPage() {
   const dashboard = dashboardQuery.data;
 
   if (!dashboard) {
-    return <LoadingState label="Preparing dashboard" />;
+    return <DashboardSkeleton />;
   }
 
   return (
@@ -98,20 +108,23 @@ function SummaryCards({ dashboard }: { dashboard: AdminDashboard }) {
   const summary = dashboard.summary_cards;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="wr-panel grid overflow-hidden rounded-lg border border-border bg-card/45 md:grid-cols-2 xl:grid-cols-4">
       <StatsCard
+        className="border-b border-border md:border-r xl:border-b-0"
         label="Total Clients"
         value={summary.total_clients}
         helper="Active client records"
         icon={Users}
       />
       <StatsCard
+        className="border-b border-border xl:border-b-0 xl:border-r"
         label="Active Projects"
         value={summary.active_projects}
         helper="Currently in progress"
         icon={FolderKanban}
       />
       <StatsCard
+        className="border-b border-border md:border-b-0 md:border-r"
         label="Pending Invoices"
         value={summary.pending_invoices}
         helper="Sent or overdue"
@@ -129,59 +142,55 @@ function SummaryCards({ dashboard }: { dashboard: AdminDashboard }) {
 
 function RecentProjects({ projects }: { projects: AdminDashboardProject[] }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Projects</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {projects.length === 0 ? (
+    <WorkspaceSection>
+      <WorkspaceSectionHeader>
+        <WorkspaceSectionTitle>Recent Projects</WorkspaceSectionTitle>
+      </WorkspaceSectionHeader>
+      {projects.length === 0 ? (
+        <WorkspaceSectionContent>
           <SectionEmpty
             icon={FolderKanban}
             title="No recent projects"
             description="Recent project activity will appear here once projects are created."
           />
-        ) : (
-          <div className="overflow-hidden rounded-md border border-border">
-            <Table className="min-w-[680px]">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead>Project</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Deadline</TableHead>
-                  <TableHead>Progress</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {projects.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell className="align-top">
-                      <p className="font-medium text-foreground">
-                        {project.title}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {project.client_name}
-                      </p>
-                    </TableCell>
-                    <TableCell className="align-top">
-                      <StatusBadge status={project.status} />
-                    </TableCell>
-                    <TableCell className="align-top text-muted-foreground">
-                      {formatDate(project.deadline)}
-                    </TableCell>
-                    <TableCell className="min-w-36 align-top">
-                      <ProgressBar value={project.progress} />
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {project.progress}% complete
-                      </p>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </WorkspaceSectionContent>
+      ) : (
+        <Table className="min-w-[680px]">
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead>Project</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Deadline</TableHead>
+              <TableHead>Progress</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {projects.map((project) => (
+              <TableRow key={project.id}>
+                <TableCell className="align-top">
+                  <p className="font-medium text-foreground">{project.title}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {project.client_name}
+                  </p>
+                </TableCell>
+                <TableCell className="align-top">
+                  <StatusBadge status={project.status} />
+                </TableCell>
+                <TableCell className="align-top text-muted-foreground">
+                  {formatDate(project.deadline)}
+                </TableCell>
+                <TableCell className="min-w-36 align-top">
+                  <ProgressBar value={project.progress} />
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {project.progress}% complete
+                  </p>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </WorkspaceSection>
   );
 }
 
@@ -191,84 +200,88 @@ function UpcomingDeadlines({
   deadlines: AdminDashboardDeadline[];
 }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Upcoming Deadlines</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {deadlines.length === 0 ? (
+    <WorkspaceSection>
+      <WorkspaceSectionHeader>
+        <WorkspaceSectionTitle>Upcoming Deadlines</WorkspaceSectionTitle>
+      </WorkspaceSectionHeader>
+      {deadlines.length === 0 ? (
+        <WorkspaceSectionContent>
           <SectionEmpty
             icon={CalendarClock}
             title="No upcoming deadlines"
             description="Project deadlines and task due dates will appear here."
           />
-        ) : (
-          <div className="divide-y divide-border rounded-md border border-border">
-            {deadlines.map((deadline) => (
-              <div
-                key={`${deadline.type}-${deadline.id}`}
-                className="grid gap-3 px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center"
-              >
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium text-foreground">
-                      {deadline.title}
-                    </p>
-                    <Badge variant="info">{formatStatus(deadline.type)}</Badge>
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Due {formatDate(deadline.due_date)}
+        </WorkspaceSectionContent>
+      ) : (
+        <WorkspaceList>
+          {deadlines.map((deadline) => (
+            <WorkspaceListRow
+              key={`${deadline.type}-${deadline.id}`}
+              className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center"
+            >
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-medium text-foreground">
+                    {deadline.title}
                   </p>
+                  <Badge variant="info">{formatStatus(deadline.type)}</Badge>
                 </div>
-                <StatusBadge status={deadline.status} />
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Due {formatDate(deadline.due_date)}
+                </p>
               </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              <StatusBadge status={deadline.status} />
+            </WorkspaceListRow>
+          ))}
+        </WorkspaceList>
+      )}
+    </WorkspaceSection>
   );
 }
 
-function RecentUpdates({ updates }: { updates: AdminDashboardProjectUpdate[] }) {
+function RecentUpdates({
+  updates,
+}: {
+  updates: AdminDashboardProjectUpdate[];
+}) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Recent Updates</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {updates.length === 0 ? (
+    <WorkspaceSection>
+      <WorkspaceSectionHeader>
+        <WorkspaceSectionTitle>Recent Updates</WorkspaceSectionTitle>
+      </WorkspaceSectionHeader>
+      {updates.length === 0 ? (
+        <WorkspaceSectionContent>
           <SectionEmpty
             icon={MessageSquareText}
             title="No recent updates"
             description="Published project updates will appear here for quick review."
           />
-        ) : (
-          <div className="divide-y divide-border rounded-md border border-border">
-            {updates.map((update) => (
-              <article key={update.id} className="px-4 py-3">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-accent">
-                      {update.project_title}
-                    </p>
-                    <h2 className="mt-1 text-sm font-semibold text-foreground">
-                      {update.title}
-                    </h2>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {formatDateTime(update.created_at)}
+        </WorkspaceSectionContent>
+      ) : (
+        <WorkspaceList>
+          {updates.map((update) => (
+            <WorkspaceListRow key={update.id}>
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p className="text-xs font-medium text-accent">
+                    {update.project_title}
                   </p>
+                  <h2 className="mt-1 text-sm font-semibold text-foreground">
+                    {update.title}
+                  </h2>
                 </div>
-                <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
-                  {update.content_preview || "No update preview available."}
+                <p className="text-xs text-muted-foreground">
+                  {formatDateTime(update.created_at)}
                 </p>
-              </article>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              </div>
+              <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">
+                {update.content_preview || "No update preview available."}
+              </p>
+            </WorkspaceListRow>
+          ))}
+        </WorkspaceList>
+      )}
+    </WorkspaceSection>
   );
 }
 
@@ -282,12 +295,12 @@ function InvoiceOverview({ dashboard }: { dashboard: AdminDashboard }) {
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Invoice Overview</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid gap-3">
+    <WorkspaceSection>
+      <WorkspaceSectionHeader>
+        <WorkspaceSectionTitle>Invoice Overview</WorkspaceSectionTitle>
+      </WorkspaceSectionHeader>
+      <WorkspaceSectionContent className="space-y-5">
+        <div className="divide-y divide-border border-y border-border">
           <InvoiceAmount
             label="Outstanding"
             value={invoice.total_outstanding}
@@ -309,7 +322,7 @@ function InvoiceOverview({ dashboard }: { dashboard: AdminDashboard }) {
           {counts.map((item) => (
             <div
               key={item.label}
-              className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/70 px-3 py-2"
+              className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/45 px-3 py-2"
             >
               <StatusBadge status={item.status} />
               <span className="text-sm font-semibold text-foreground">
@@ -318,8 +331,8 @@ function InvoiceOverview({ dashboard }: { dashboard: AdminDashboard }) {
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </WorkspaceSectionContent>
+    </WorkspaceSection>
   );
 }
 
@@ -333,7 +346,7 @@ function InvoiceAmount({
   helper: string;
 }) {
   return (
-    <div className="linear-panel rounded-md border border-border bg-card px-4 py-3">
+    <div className="py-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-foreground">{label}</p>

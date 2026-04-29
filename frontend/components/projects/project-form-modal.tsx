@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, X } from "lucide-react";
+import { Loader2, Users, X } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -118,6 +118,7 @@ export function ProjectFormModal({
         {activeClients.length === 0 ? (
           <div className="p-5 sm:p-6">
             <EmptyState
+              icon={Users}
               title="No active clients"
               description="Create or reactivate a client before adding a project."
             />
@@ -139,10 +140,7 @@ export function ProjectFormModal({
                 error={form.formState.errors.client_id?.message}
                 label="Client"
               >
-                <Select
-                  disabled={isSubmitting}
-                  {...form.register("client_id")}
-                >
+                <Select disabled={isSubmitting} {...form.register("client_id")}>
                   {activeClients.map((client) => (
                     <option key={client.id} value={client.id}>
                       {client.company_name
@@ -157,10 +155,7 @@ export function ProjectFormModal({
                 error={form.formState.errors.status?.message}
                 label="Status"
               >
-                <Select
-                  disabled={isSubmitting}
-                  {...form.register("status")}
-                >
+                <Select disabled={isSubmitting} {...form.register("status")}>
                   {PROJECT_STATUSES.map((status) => (
                     <option key={status} value={status}>
                       {formatStatus(status)}

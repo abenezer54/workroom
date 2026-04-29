@@ -7,17 +7,23 @@ import { useParams } from "next/navigation";
 import { useMemo } from "react";
 
 import {
-  DetailItem,
   errorMessage,
   formatCurrency,
   formatDate,
   PortalSectionError,
 } from "@/components/client-portal/portal-helpers";
-import { LoadingState } from "@/components/shared/loading-state";
+import { ProjectDetailSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  MetadataGrid,
+  MetadataItem,
+  WorkspaceSection,
+  WorkspaceSectionContent,
+  WorkspaceSectionHeader,
+  WorkspaceSectionTitle,
+} from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -26,10 +32,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  getClientInvoice,
-  getClientProjects,
-} from "@/lib/api/client-portal";
+import { getClientInvoice, getClientProjects } from "@/lib/api/client-portal";
 
 export default function ClientInvoiceDetailPage() {
   const params = useParams<{ id: string }>();
@@ -47,7 +50,9 @@ export default function ClientInvoiceDetailPage() {
 
   const projectMap = useMemo(
     () =>
-      new Map((projectsQuery.data ?? []).map((project) => [project.id, project])),
+      new Map(
+        (projectsQuery.data ?? []).map((project) => [project.id, project]),
+      ),
     [projectsQuery.data],
   );
 
@@ -58,7 +63,7 @@ export default function ClientInvoiceDetailPage() {
   const loadError = invoiceQuery.error ?? projectsQuery.error;
 
   if (invoiceQuery.isLoading || projectsQuery.isLoading) {
-    return <LoadingState label="Loading invoice" />;
+    return <ProjectDetailSkeleton />;
   }
 
   if (loadError || !invoice) {
@@ -71,7 +76,9 @@ export default function ClientInvoiceDetailPage() {
           </Link>
         </Button>
         <PortalSectionError
-          message={errorMessage(loadError) ?? "The invoice could not be loaded."}
+          message={
+            errorMessage(loadError) ?? "The invoice could not be loaded."
+          }
           onRetry={() => {
             invoiceQuery.refetch();
             projectsQuery.refetch();
@@ -97,29 +104,41 @@ export default function ClientInvoiceDetailPage() {
       />
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <Card>
-          <CardHeader>
+        <WorkspaceSection>
+          <WorkspaceSectionHeader>
             <div className="flex flex-wrap items-center gap-2">
-              <CardTitle>Invoice Details</CardTitle>
+              <WorkspaceSectionTitle>Invoice Details</WorkspaceSectionTitle>
               <StatusBadge status={invoice.status} />
             </div>
-          </CardHeader>
-          <CardContent className="space-y-5">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <DetailItem label="Project" value={project?.title ?? "No project"} />
-              <DetailItem label="Issue date" value={formatDate(invoice.issue_date)} />
-              <DetailItem label="Due date" value={formatDate(invoice.due_date)} />
-              <DetailItem label="Status" value={formatStatus(invoice.status)} />
-            </div>
-          </CardContent>
-        </Card>
+          </WorkspaceSectionHeader>
+          <WorkspaceSectionContent>
+            <MetadataGrid>
+              <MetadataItem
+                label="Project"
+                value={project?.title ?? "No project"}
+              />
+              <MetadataItem
+                label="Issue date"
+                value={formatDate(invoice.issue_date)}
+              />
+              <MetadataItem
+                label="Due date"
+                value={formatDate(invoice.due_date)}
+              />
+              <MetadataItem
+                label="Status"
+                value={formatStatus(invoice.status)}
+              />
+            </MetadataGrid>
+          </WorkspaceSectionContent>
+        </WorkspaceSection>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Total</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-3 rounded-md border border-border bg-muted px-4 py-4">
+        <WorkspaceSection className="xl:self-start">
+          <WorkspaceSectionHeader>
+            <WorkspaceSectionTitle>Total</WorkspaceSectionTitle>
+          </WorkspaceSectionHeader>
+          <WorkspaceSectionContent>
+            <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-md bg-accent-soft text-accent">
                 <ReceiptText className="h-5 w-5" aria-hidden="true" />
               </span>
@@ -130,55 +149,59 @@ export default function ClientInvoiceDetailPage() {
                 <p className="text-xs text-muted-foreground">Invoice total</p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </WorkspaceSectionContent>
+        </WorkspaceSection>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Line Items</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-hidden rounded-md border border-border">
-            <Table className="min-w-[620px]">
-              <TableHeader>
-                <TableRow className="hover:bg-transparent">
-                  <TableHead>Description</TableHead>
-                  <TableHead>Quantity</TableHead>
-                  <TableHead>Unit Price</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(invoice.items ?? []).map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.description}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {item.quantity}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {formatCurrency(item.unit_price)}
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      {formatCurrency(item.amount)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+      <WorkspaceSection>
+        <WorkspaceSectionHeader>
+          <WorkspaceSectionTitle>Line Items</WorkspaceSectionTitle>
+        </WorkspaceSectionHeader>
+        <Table className="min-w-[620px]">
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead>Description</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Unit Price</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {(invoice.items ?? []).map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>{item.description}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {item.quantity}
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {formatCurrency(item.unit_price)}
+                </TableCell>
+                <TableCell className="text-right font-medium">
+                  {formatCurrency(item.amount)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
+        <WorkspaceSectionContent>
           <div className="ml-auto mt-5 max-w-sm space-y-3">
-            <TotalRow label="Subtotal" value={formatCurrency(invoice.subtotal)} />
+            <TotalRow
+              label="Subtotal"
+              value={formatCurrency(invoice.subtotal)}
+            />
             <TotalRow label="Tax" value={formatCurrency(invoice.tax)} />
-            <TotalRow label="Discount" value={formatCurrency(invoice.discount)} />
+            <TotalRow
+              label="Discount"
+              value={formatCurrency(invoice.discount)}
+            />
             <div className="flex items-center justify-between border-t border-border pt-3 text-base font-semibold text-foreground">
               <span>Total</span>
               <span>{formatCurrency(invoice.total)}</span>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </WorkspaceSectionContent>
+      </WorkspaceSection>
     </div>
   );
 }

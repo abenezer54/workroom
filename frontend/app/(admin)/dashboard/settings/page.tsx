@@ -4,7 +4,16 @@ import { Bell, CreditCard, Settings, UserRound, Users } from "lucide-react";
 
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  MetadataGrid,
+  MetadataItem,
+  WorkspaceList,
+  WorkspaceListRow,
+  WorkspaceSection,
+  WorkspaceSectionContent,
+  WorkspaceSectionHeader,
+  WorkspaceSectionTitle,
+} from "@/components/shared/workspace-section";
 import { useAuth } from "@/lib/auth/auth-provider";
 
 export default function SettingsPage() {
@@ -17,22 +26,31 @@ export default function SettingsPage() {
         title="Settings"
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Account</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <ReadOnlyField label="Name" value={user?.name ?? "Unknown"} />
-          <ReadOnlyField label="Email" value={user?.email ?? "Unknown"} />
-          <ReadOnlyField label="Role" value={<StatusBadge status={user?.role ?? "UNKNOWN"} />} />
-          <ReadOnlyField
+      <WorkspaceSection>
+        <WorkspaceSectionHeader>
+          <WorkspaceSectionTitle>Account</WorkspaceSectionTitle>
+        </WorkspaceSectionHeader>
+        <WorkspaceSectionContent>
+          <MetadataGrid className="lg:grid-cols-4">
+            <MetadataItem label="Name" value={user?.name ?? "Unknown"} />
+            <MetadataItem label="Email" value={user?.email ?? "Unknown"} />
+            <MetadataItem
+              label="Role"
+              value={<StatusBadge status={user?.role ?? "UNKNOWN"} />}
+            />
+            <MetadataItem
             label="Workspace ID"
             value={user?.agency_id ?? user?.id ?? "Unavailable"}
           />
-        </CardContent>
-      </Card>
+          </MetadataGrid>
+        </WorkspaceSectionContent>
+      </WorkspaceSection>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <WorkspaceSection>
+        <WorkspaceSectionHeader>
+          <WorkspaceSectionTitle>Workspace Areas</WorkspaceSectionTitle>
+        </WorkspaceSectionHeader>
+        <WorkspaceList>
         <SettingsSection
           description="Profile editing will be added in a future settings phase."
           icon={UserRound}
@@ -58,37 +76,21 @@ export default function SettingsPage() {
           icon={CreditCard}
           title="Billing"
         />
-      </div>
+        </WorkspaceList>
+      </WorkspaceSection>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Demo Limitations</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <WorkspaceSection>
+        <WorkspaceSectionHeader>
+          <WorkspaceSectionTitle>Demo Limitations</WorkspaceSectionTitle>
+        </WorkspaceSectionHeader>
+        <WorkspaceSectionContent>
           <p className="text-sm leading-6 text-muted-foreground">
             This settings area is intentionally read-only for the portfolio MVP.
             Profile editing, team access, notifications, billing, file uploads,
             payments, and email workflows are not implemented in this phase.
           </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-function ReadOnlyField({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) {
-  return (
-    <div className="linear-panel rounded-md border border-border bg-surface-1 px-4 py-3">
-      <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <div className="mt-1 break-all text-sm font-medium text-foreground">
-        {value}
-      </div>
+        </WorkspaceSectionContent>
+      </WorkspaceSection>
     </div>
   );
 }
@@ -103,18 +105,16 @@ function SettingsSection({
   title: string;
 }) {
   return (
-    <Card>
-      <CardContent className="flex gap-4 p-5">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent">
-          <Icon className="h-5 w-5" aria-hidden="true" />
-        </span>
-        <div>
-          <h2 className="text-sm font-semibold text-foreground">{title}</h2>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            {description}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <WorkspaceListRow className="flex gap-4 py-4">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent-soft text-accent">
+        <Icon className="h-4 w-4" aria-hidden="true" />
+      </span>
+      <div>
+        <h2 className="text-sm font-semibold text-foreground">{title}</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">
+          {description}
+        </p>
+      </div>
+    </WorkspaceListRow>
   );
 }

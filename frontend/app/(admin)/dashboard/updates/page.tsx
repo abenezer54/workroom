@@ -6,10 +6,14 @@ import Link from "next/link";
 
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import { TablePageSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
+import {
+  WorkspaceList,
+  WorkspaceListRow,
+  WorkspaceSection,
+} from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ApiError } from "@/lib/api/client";
 import { getUpdates } from "@/lib/api/project-updates";
 
@@ -33,14 +37,18 @@ export default function UpdatesPage() {
       </div>
 
       {updatesQuery.isLoading ? (
-        <LoadingState label="Loading updates" />
+        <TablePageSkeleton />
       ) : updatesQuery.isError ? (
         <div className="space-y-4">
           <ErrorState
             title="Updates could not load"
             message={errorMessage(updatesQuery.error)}
           />
-          <Button onClick={() => updatesQuery.refetch()} type="button" variant="secondary">
+          <Button
+            onClick={() => updatesQuery.refetch()}
+            type="button"
+            variant="secondary"
+          >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
             Retry
           </Button>
@@ -52,11 +60,11 @@ export default function UpdatesPage() {
           title="No updates yet"
         />
       ) : (
-        <Card>
-          <CardContent className="divide-y divide-border p-0">
+        <WorkspaceSection>
+          <WorkspaceList>
             {updates.map((update) => (
-              <article
-                className="grid gap-4 px-5 py-4 lg:grid-cols-[minmax(0,1fr)_auto]"
+              <WorkspaceListRow
+                className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]"
                 key={update.id}
               >
                 <div className="min-w-0">
@@ -79,10 +87,10 @@ export default function UpdatesPage() {
                     View Project
                   </Link>
                 </Button>
-              </article>
+              </WorkspaceListRow>
             ))}
-          </CardContent>
-        </Card>
+          </WorkspaceList>
+        </WorkspaceSection>
       )}
     </div>
   );

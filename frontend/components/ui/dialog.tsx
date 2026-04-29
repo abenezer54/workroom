@@ -25,7 +25,7 @@ export function DialogContent({
     <section
       aria-modal="true"
       className={cn(
-        "linear-panel-strong max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-lg border border-input bg-card text-card-foreground sm:max-h-[calc(100vh-4rem)]",
+        "wr-panel-strong max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-lg border border-input bg-card text-card-foreground sm:max-h-[calc(100vh-4rem)]",
         className,
       )}
       role="dialog"

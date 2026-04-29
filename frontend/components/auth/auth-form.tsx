@@ -208,7 +208,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </form>
 
         {isLogin ? (
-          <div className="linear-panel rounded-md border border-border bg-muted/70 p-3">
+          <div className="wr-panel rounded-md border border-border bg-muted/70 p-3">
             <p className="text-xs font-medium text-foreground">
               Demo accounts
             </p>

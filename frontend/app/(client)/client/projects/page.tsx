@@ -12,12 +12,17 @@ import {
   PortalSectionError,
 } from "@/components/client-portal/portal-helpers";
 import { EmptyState } from "@/components/shared/empty-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import { TablePageSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { ProgressBar } from "@/components/shared/progress-bar";
 import { StatusBadge } from "@/components/shared/status-badge";
+import {
+  WorkspaceList,
+  WorkspaceListRow,
+  WorkspaceSection,
+  WorkspaceToolbar,
+} from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -33,7 +38,10 @@ export default function ClientProjectsPage() {
     queryFn: () => getClientProjects({ search, status }),
   });
 
-  const projects = useMemo(() => projectsQuery.data ?? [], [projectsQuery.data]);
+  const projects = useMemo(
+    () => projectsQuery.data ?? [],
+    [projectsQuery.data],
+  );
 
   return (
     <div className="space-y-6">
@@ -42,8 +50,8 @@ export default function ClientProjectsPage() {
         title="Projects"
       />
 
-      <Card>
-        <CardContent className="grid gap-4 p-5 md:grid-cols-[minmax(0,1fr)_220px]">
+      <WorkspaceToolbar>
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
           <div className="space-y-2">
             <Label htmlFor="client-project-search">Search</Label>
             <div className="relative">
@@ -74,11 +82,11 @@ export default function ClientProjectsPage() {
               ))}
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </WorkspaceToolbar>
 
       {projectsQuery.isLoading ? (
-        <LoadingState label="Loading projects" />
+        <TablePageSkeleton />
       ) : projectsQuery.isError ? (
         <PortalSectionError
           message={
@@ -99,10 +107,10 @@ export default function ClientProjectsPage() {
           title="No projects match these filters"
         />
       ) : (
-        <div className="grid gap-4">
-          {projects.map((project) => (
-            <Card key={project.id}>
-              <CardContent className="p-5">
+        <WorkspaceSection>
+          <WorkspaceList>
+            {projects.map((project) => (
+              <WorkspaceListRow className="py-5" key={project.id}>
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0 space-y-3">
                     <div className="flex flex-wrap items-center gap-2">
@@ -135,10 +143,10 @@ export default function ClientProjectsPage() {
                   label="Progress"
                   value={project.progress}
                 />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </WorkspaceListRow>
+            ))}
+          </WorkspaceList>
+        </WorkspaceSection>
       )}
     </div>
   );

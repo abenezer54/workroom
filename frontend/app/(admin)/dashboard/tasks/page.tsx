@@ -2,18 +2,18 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ExternalLink, RefreshCw } from "lucide-react";
+import { CheckSquare, ExternalLink, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import { DataTable } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import { TablePageSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { WorkspaceToolbar } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { ApiError } from "@/lib/api/client";
@@ -78,14 +78,21 @@ export default function TasksPage() {
       },
       {
         id: "actions",
-        header: "Action",
+        header: "",
         cell: ({ row }) => (
-          <Button asChild size="sm" type="button" variant="secondary">
-            <Link href={`/dashboard/projects/${row.original.project_id}`}>
-              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-              View Project
-            </Link>
-          </Button>
+          <div className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100">
+            <Button
+              asChild
+              size="icon"
+              title="View project"
+              type="button"
+              variant="ghost"
+            >
+              <Link href={`/dashboard/projects/${row.original.project_id}`}>
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         ),
       },
     ],
@@ -105,8 +112,8 @@ export default function TasksPage() {
         Tasks are created and edited inside each project.
       </div>
 
-      <Card>
-        <CardContent className="grid gap-4 p-5 md:grid-cols-2">
+      <WorkspaceToolbar>
+        <div className="grid gap-4 md:grid-cols-2">
           <FilterSelect
             id="task-status"
             label="Status"
@@ -133,24 +140,29 @@ export default function TasksPage() {
               </option>
             ))}
           </FilterSelect>
-        </CardContent>
-      </Card>
+        </div>
+      </WorkspaceToolbar>
 
       {tasksQuery.isLoading ? (
-        <LoadingState label="Loading tasks" />
+        <TablePageSkeleton />
       ) : tasksQuery.isError ? (
         <div className="space-y-4">
           <ErrorState
             title="Tasks could not load"
             message={errorMessage(tasksQuery.error)}
           />
-          <Button onClick={() => tasksQuery.refetch()} type="button" variant="secondary">
+          <Button
+            onClick={() => tasksQuery.refetch()}
+            type="button"
+            variant="secondary"
+          >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
             Retry
           </Button>
         </div>
       ) : tasks.length === 0 ? (
         <EmptyState
+          icon={CheckSquare}
           title="No tasks found"
           description="Tasks from active project work will appear here."
         />

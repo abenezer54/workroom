@@ -13,17 +13,14 @@ import {
 } from "@/components/client-portal/portal-helpers";
 import { DataTable } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import { TablePageSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { WorkspaceToolbar } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
-import {
-  getClientInvoices,
-  getClientProjects,
-} from "@/lib/api/client-portal";
+import { getClientInvoices, getClientProjects } from "@/lib/api/client-portal";
 import {
   INVOICE_STATUSES,
   type Invoice,
@@ -46,7 +43,10 @@ export default function ClientInvoicesPage() {
     queryFn: () => getClientProjects(),
   });
 
-  const projects = useMemo(() => projectsQuery.data ?? [], [projectsQuery.data]);
+  const projects = useMemo(
+    () => projectsQuery.data ?? [],
+    [projectsQuery.data],
+  );
   const projectMap = useMemo(
     () => new Map(projects.map((project) => [project.id, project])),
     [projects],
@@ -69,7 +69,8 @@ export default function ClientInvoicesPage() {
       },
       {
         header: "Project",
-        cell: ({ row }) => projectTitle(projectMap.get(row.original.project_id ?? "")),
+        cell: ({ row }) =>
+          projectTitle(projectMap.get(row.original.project_id ?? "")),
       },
       {
         accessorKey: "status",
@@ -90,19 +91,28 @@ export default function ClientInvoicesPage() {
         accessorKey: "total",
         header: "Total",
         cell: ({ row }) => (
-          <span className="font-medium">{formatCurrency(row.original.total)}</span>
+          <span className="font-medium">
+            {formatCurrency(row.original.total)}
+          </span>
         ),
       },
       {
         id: "actions",
-        header: "Actions",
+        header: "",
         cell: ({ row }) => (
-          <Button asChild size="sm" type="button" variant="secondary">
-            <Link href={`/client/invoices/${row.original.id}`}>
-              <Eye className="h-4 w-4" aria-hidden="true" />
-              View details
-            </Link>
-          </Button>
+          <div className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100">
+            <Button
+              asChild
+              size="icon"
+              title="View details"
+              type="button"
+              variant="ghost"
+            >
+              <Link href={`/client/invoices/${row.original.id}`}>
+                <Eye className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         ),
       },
     ],
@@ -116,8 +126,8 @@ export default function ClientInvoicesPage() {
         title="Invoices"
       />
 
-      <Card>
-        <CardContent className="grid gap-4 p-5 md:grid-cols-2">
+      <WorkspaceToolbar>
+        <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="client-invoice-status">Status</Label>
             <Select
@@ -151,11 +161,11 @@ export default function ClientInvoicesPage() {
               ))}
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </WorkspaceToolbar>
 
       {isLoading ? (
-        <LoadingState label="Loading invoices" />
+        <TablePageSkeleton />
       ) : loadError ? (
         <PortalSectionError
           message={errorMessage(loadError) ?? "Invoices could not be loaded."}

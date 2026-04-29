@@ -2,19 +2,20 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Archive, Edit2, Plus, RefreshCw, Search } from "lucide-react";
+import { Archive, Edit2, Plus, RefreshCw, Search, Users } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { ArchiveClientDialog } from "@/components/clients/archive-client-dialog";
 import { ClientFormModal } from "@/components/clients/client-form-modal";
 import { DataTable } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import { TablePageSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { WorkspaceToolbar } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -40,7 +41,6 @@ export default function ClientsPage() {
   const [formClient, setFormClient] = useState<Client | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [archiveTarget, setArchiveTarget] = useState<Client | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   const clientsQuery = useQuery({
     queryKey: ["clients", { search, status }],
@@ -49,12 +49,10 @@ export default function ClientsPage() {
 
   const saveClientMutation = useMutation({
     mutationFn: (values: ClientPayload) =>
-      formClient
-        ? updateClient(formClient.id, values)
-        : createClient(values),
+      formClient ? updateClient(formClient.id, values) : createClient(values),
     onSuccess(client) {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
-      setNotice(
+      toast(
         formClient
           ? `${client.name} was updated.`
           : `${client.name} was added.`,
@@ -68,7 +66,7 @@ export default function ClientsPage() {
     mutationFn: (client: Client) => archiveClient(client.id),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["clients"] });
-      setNotice(`${archiveTarget?.name ?? "Client"} was archived.`);
+      toast(`${archiveTarget?.name ?? "Client"} was archived.`);
       setArchiveTarget(null);
     },
   });
@@ -80,9 +78,7 @@ export default function ClientsPage() {
         header: "Client",
         cell: ({ row }) => (
           <div>
-            <p className="font-medium text-foreground">
-              {row.original.name}
-            </p>
+            <p className="font-medium text-foreground">{row.original.name}</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {row.original.company_name || "No company"}
             </p>
@@ -115,34 +111,32 @@ export default function ClientsPage() {
       },
       {
         id: "actions",
-        header: "Actions",
+        header: "",
         cell: ({ row }) => (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
             <Button
               onClick={() => {
-                setNotice(null);
                 setFormClient(row.original);
                 setIsFormOpen(true);
               }}
-              size="sm"
+              size="icon"
+              title="Edit"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              <Edit2 className="h-4 w-4" aria-hidden="true" />
-              Edit
+              <Edit2 className="h-4 w-4" />
             </Button>
             <Button
               disabled={row.original.status === "ARCHIVED"}
               onClick={() => {
-                setNotice(null);
                 setArchiveTarget(row.original);
               }}
-              size="sm"
+              size="icon"
+              title="Archive"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              <Archive className="h-4 w-4" aria-hidden="true" />
-              Archive
+              <Archive className="h-4 w-4" />
             </Button>
           </div>
         ),
@@ -161,7 +155,6 @@ export default function ClientsPage() {
         actions={
           <Button
             onClick={() => {
-              setNotice(null);
               setFormClient(null);
               setIsFormOpen(true);
             }}
@@ -175,14 +168,8 @@ export default function ClientsPage() {
         title="Clients"
       />
 
-      {notice ? (
-        <div className="rounded-md border border-success-border bg-success-soft px-4 py-3 text-sm text-success">
-          {notice}
-        </div>
-      ) : null}
-
-      <Card>
-        <CardContent className="grid gap-4 p-5 md:grid-cols-[minmax(0,1fr)_220px]">
+      <WorkspaceToolbar>
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
           <div className="space-y-2">
             <Label htmlFor="client-search">Search</Label>
             <div className="relative">
@@ -203,7 +190,9 @@ export default function ClientsPage() {
             <Label htmlFor="client-status">Status</Label>
             <Select
               id="client-status"
-              onChange={(event) => setStatus(event.target.value as StatusFilter)}
+              onChange={(event) =>
+                setStatus(event.target.value as StatusFilter)
+              }
               value={status}
             >
               <option value="ALL">All active statuses</option>
@@ -214,11 +203,11 @@ export default function ClientsPage() {
               ))}
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </WorkspaceToolbar>
 
       {clientsQuery.isLoading ? (
-        <LoadingState label="Loading clients" />
+        <TablePageSkeleton />
       ) : clientsQuery.isError ? (
         <div className="space-y-4">
           <ErrorState
@@ -239,6 +228,7 @@ export default function ClientsPage() {
         </div>
       ) : clients.length === 0 && !search && status === "ALL" ? (
         <EmptyState
+          icon={Users}
           title="No clients yet"
           description="Add your first client to start organizing project work and invoices."
         />
@@ -266,7 +256,6 @@ export default function ClientsPage() {
           setFormClient(null);
         }}
         onSubmit={(values: ClientFormValues) => {
-          setNotice(null);
           saveClientMutation.mutate(values);
         }}
       />
@@ -285,7 +274,6 @@ export default function ClientsPage() {
         }}
         onConfirm={() => {
           if (archiveTarget) {
-            setNotice(null);
             archiveMutation.mutate(archiveTarget);
           }
         }}

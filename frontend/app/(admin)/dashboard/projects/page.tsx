@@ -1,11 +1,13 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import type { ColumnDef } from "@tanstack/react-table";
 import {
   Archive,
   Edit2,
   Eye,
+  FolderKanban,
   Plus,
   RefreshCw,
   Search,
@@ -18,12 +20,12 @@ import { ProjectFormModal } from "@/components/projects/project-form-modal";
 import { DataTable } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import { TablePageSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { ProgressBar } from "@/components/shared/progress-bar";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { WorkspaceToolbar } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -51,7 +53,6 @@ export default function ProjectsPage() {
   const [formProject, setFormProject] = useState<Project | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [archiveTarget, setArchiveTarget] = useState<Project | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   const projectsQuery = useQuery({
     queryKey: ["projects", { clientId, search, status }],
@@ -82,7 +83,7 @@ export default function ProjectsPage() {
     onSuccess(project) {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] });
-      setNotice(
+      toast(
         formProject
           ? `${project.title} was updated.`
           : `${project.title} was added.`,
@@ -97,7 +98,7 @@ export default function ProjectsPage() {
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] });
-      setNotice(`${archiveTarget?.title ?? "Project"} was archived.`);
+      toast(`${archiveTarget?.title ?? "Project"} was archived.`);
       setArchiveTarget(null);
     },
   });
@@ -155,40 +156,43 @@ export default function ProjectsPage() {
       },
       {
         id: "actions",
-        header: "Actions",
+        header: "",
         cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Button asChild size="sm" type="button" variant="secondary">
+          <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+            <Button
+              asChild
+              size="icon"
+              title="View"
+              type="button"
+              variant="ghost"
+            >
               <Link href={`/dashboard/projects/${row.original.id}`}>
-                <Eye className="h-4 w-4" aria-hidden="true" />
-                View
+                <Eye className="h-4 w-4" />
               </Link>
             </Button>
             <Button
               onClick={() => {
-                setNotice(null);
                 setFormProject(row.original);
                 setIsFormOpen(true);
               }}
-              size="sm"
+              size="icon"
+              title="Edit"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              <Edit2 className="h-4 w-4" aria-hidden="true" />
-              Edit
+              <Edit2 className="h-4 w-4" />
             </Button>
             <Button
               disabled={row.original.status === "ARCHIVED"}
               onClick={() => {
-                setNotice(null);
                 setArchiveTarget(row.original);
               }}
-              size="sm"
+              size="icon"
+              title="Archive"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              <Archive className="h-4 w-4" aria-hidden="true" />
-              Archive
+              <Archive className="h-4 w-4" />
             </Button>
           </div>
         ),
@@ -209,7 +213,6 @@ export default function ProjectsPage() {
         actions={
           <Button
             onClick={() => {
-              setNotice(null);
               setFormProject(null);
               setIsFormOpen(true);
             }}
@@ -223,14 +226,8 @@ export default function ProjectsPage() {
         title="Projects"
       />
 
-      {notice ? (
-        <div className="rounded-md border border-success-border bg-success-soft px-4 py-3 text-sm text-success">
-          {notice}
-        </div>
-      ) : null}
-
-      <Card>
-        <CardContent className="grid gap-4 p-5 lg:grid-cols-[minmax(0,1fr)_220px_260px]">
+      <WorkspaceToolbar>
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px_260px]">
           <div className="space-y-2">
             <Label htmlFor="project-search">Search</Label>
             <div className="relative">
@@ -252,7 +249,9 @@ export default function ProjectsPage() {
             <Label htmlFor="project-status">Status</Label>
             <Select
               id="project-status"
-              onChange={(event) => setStatus(event.target.value as StatusFilter)}
+              onChange={(event) =>
+                setStatus(event.target.value as StatusFilter)
+              }
               value={status}
             >
               <option value="ALL">All active statuses</option>
@@ -280,11 +279,11 @@ export default function ProjectsPage() {
               ))}
             </Select>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </WorkspaceToolbar>
 
       {isInitialLoading ? (
-        <LoadingState label="Loading projects" />
+        <TablePageSkeleton />
       ) : loadError ? (
         <div className="space-y-4">
           <ErrorState
@@ -311,6 +310,7 @@ export default function ProjectsPage() {
         status === "ALL" &&
         clientId === "ALL" ? (
         <EmptyState
+          icon={FolderKanban}
           title="No projects yet"
           description="Add a project once you have an active client ready for work."
         />
@@ -339,7 +339,6 @@ export default function ProjectsPage() {
           setFormProject(null);
         }}
         onSubmit={(values) => {
-          setNotice(null);
           saveProjectMutation.mutate(toProjectPayload(values));
         }}
       />
@@ -358,7 +357,6 @@ export default function ProjectsPage() {
         }}
         onConfirm={() => {
           if (archiveTarget) {
-            setNotice(null);
             archiveMutation.mutate(archiveTarget);
           }
         }}
@@ -385,7 +383,9 @@ function clientLabel(client?: Client) {
     return "Unknown client";
   }
 
-  return client.company_name ? `${client.name} · ${client.company_name}` : client.name;
+  return client.company_name
+    ? `${client.name} · ${client.company_name}`
+    : client.name;
 }
 
 function errorMessage(error: unknown) {

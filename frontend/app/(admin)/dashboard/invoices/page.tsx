@@ -2,8 +2,9 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Ban, Edit2, Eye, Plus, RefreshCw } from "lucide-react";
+import { Ban, Edit2, Eye, FileText, Plus, RefreshCw } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { CancelInvoiceDialog } from "@/components/invoices/cancel-invoice-dialog";
 import { InvoiceDetailModal } from "@/components/invoices/invoice-detail-modal";
@@ -12,11 +13,11 @@ import { InvoiceStatusModal } from "@/components/invoices/invoice-status-modal";
 import { DataTable } from "@/components/shared/data-table";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
-import { LoadingState } from "@/components/shared/loading-state";
+import { TablePageSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { StatusBadge } from "@/components/shared/status-badge";
+import { WorkspaceToolbar } from "@/components/shared/workspace-section";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { ApiError } from "@/lib/api/client";
@@ -48,7 +49,6 @@ export default function InvoicesPage() {
   const [detailInvoiceId, setDetailInvoiceId] = useState<string | null>(null);
   const [statusInvoice, setStatusInvoice] = useState<Invoice | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Invoice | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   const invoicesQuery = useQuery({
     queryKey: ["invoices", { clientId, projectId, status }],
@@ -83,7 +83,10 @@ export default function InvoicesPage() {
   });
 
   const clients = useMemo(() => clientsQuery.data ?? [], [clientsQuery.data]);
-  const projects = useMemo(() => projectsQuery.data ?? [], [projectsQuery.data]);
+  const projects = useMemo(
+    () => projectsQuery.data ?? [],
+    [projectsQuery.data],
+  );
   const clientMap = useMemo(
     () => new Map(clients.map((client) => [client.id, client])),
     [clients],
@@ -92,16 +95,20 @@ export default function InvoicesPage() {
     () => new Map(projects.map((project) => [project.id, project])),
     [projects],
   );
-  const activeClients = clients.filter((client) => client.status !== "ARCHIVED");
+  const activeClients = clients.filter(
+    (client) => client.status !== "ARCHIVED",
+  );
 
   const saveInvoiceMutation = useMutation({
     mutationFn: (values: InvoicePayload) =>
-      editInvoiceId ? updateInvoice(editInvoiceId, values) : createInvoice(values),
+      editInvoiceId
+        ? updateInvoice(editInvoiceId, values)
+        : createInvoice(values),
     onSuccess(invoice) {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
       queryClient.invalidateQueries({ queryKey: ["invoice", invoice.id] });
       queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] });
-      setNotice(
+      toast(
         editInvoiceId
           ? `${invoice.invoice_number} was updated.`
           : `${invoice.invoice_number} was created.`,
@@ -112,13 +119,18 @@ export default function InvoicesPage() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: ({ invoice, nextStatus }: { invoice: Invoice; nextStatus: InvoiceStatus }) =>
-      updateInvoiceStatus(invoice.id, nextStatus),
+    mutationFn: ({
+      invoice,
+      nextStatus,
+    }: {
+      invoice: Invoice;
+      nextStatus: InvoiceStatus;
+    }) => updateInvoiceStatus(invoice.id, nextStatus),
     onSuccess(invoice) {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
       queryClient.invalidateQueries({ queryKey: ["invoice", invoice.id] });
       queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] });
-      setNotice(`${invoice.invoice_number} status was updated.`);
+      toast(`${invoice.invoice_number} status was updated.`);
       setStatusInvoice(null);
     },
   });
@@ -128,7 +140,7 @@ export default function InvoicesPage() {
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: ["invoices"] });
       queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] });
-      setNotice(`${cancelTarget?.invoice_number ?? "Invoice"} was cancelled.`);
+      toast(`${cancelTarget?.invoice_number ?? "Invoice"} was cancelled.`);
       setCancelTarget(null);
     },
   });
@@ -154,7 +166,8 @@ export default function InvoicesPage() {
         header: "Project",
         cell: ({ row }) =>
           row.original.project_id
-            ? projectMap.get(row.original.project_id)?.title ?? "Unknown project"
+            ? (projectMap.get(row.original.project_id)?.title ??
+              "Unknown project")
             : "—",
       },
       {
@@ -179,57 +192,54 @@ export default function InvoicesPage() {
       },
       {
         id: "actions",
-        header: "Actions",
+        header: "",
         cell: ({ row }) => (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
             <Button
               onClick={() => {
-                setNotice(null);
                 setDetailInvoiceId(row.original.id);
               }}
-              size="sm"
+              size="icon"
+              title="View"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              <Eye className="h-4 w-4" aria-hidden="true" />
-              View
+              <Eye className="h-4 w-4" />
             </Button>
             <Button
               onClick={() => {
-                setNotice(null);
                 setEditInvoiceId(row.original.id);
                 setIsFormOpen(true);
               }}
-              size="sm"
+              size="icon"
+              title="Edit"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              <Edit2 className="h-4 w-4" aria-hidden="true" />
-              Edit
+              <Edit2 className="h-4 w-4" />
             </Button>
             <Button
               onClick={() => {
-                setNotice(null);
                 setStatusInvoice(row.original);
               }}
-              size="sm"
+              size="icon"
+              title="Update status"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              Status
+              <RefreshCw className="h-4 w-4" />
             </Button>
             <Button
               disabled={row.original.status === "CANCELLED"}
               onClick={() => {
-                setNotice(null);
                 setCancelTarget(row.original);
               }}
-              size="sm"
+              size="icon"
+              title="Cancel"
               type="button"
-              variant="secondary"
+              variant="ghost"
             >
-              <Ban className="h-4 w-4" aria-hidden="true" />
-              Cancel
+              <Ban className="h-4 w-4" />
             </Button>
           </div>
         ),
@@ -240,8 +250,11 @@ export default function InvoicesPage() {
 
   const invoices = invoicesQuery.data ?? [];
   const isInitialLoading =
-    invoicesQuery.isLoading || clientsQuery.isLoading || projectsQuery.isLoading;
-  const loadError = invoicesQuery.error ?? clientsQuery.error ?? projectsQuery.error;
+    invoicesQuery.isLoading ||
+    clientsQuery.isLoading ||
+    projectsQuery.isLoading;
+  const loadError =
+    invoicesQuery.error ?? clientsQuery.error ?? projectsQuery.error;
 
   return (
     <div className="space-y-6">
@@ -249,7 +262,6 @@ export default function InvoicesPage() {
         actions={
           <Button
             onClick={() => {
-              setNotice(null);
               setEditInvoiceId(null);
               setIsFormOpen(true);
             }}
@@ -263,14 +275,8 @@ export default function InvoicesPage() {
         title="Invoices"
       />
 
-      {notice ? (
-        <div className="rounded-md border border-success-border bg-success-soft px-4 py-3 text-sm text-success">
-          {notice}
-        </div>
-      ) : null}
-
-      <Card>
-        <CardContent className="grid gap-4 p-5 lg:grid-cols-3">
+      <WorkspaceToolbar>
+        <div className="grid gap-4 lg:grid-cols-3">
           <FilterSelect
             id="invoice-status"
             label="Status"
@@ -312,11 +318,11 @@ export default function InvoicesPage() {
               </option>
             ))}
           </FilterSelect>
-        </CardContent>
-      </Card>
+        </div>
+      </WorkspaceToolbar>
 
       {isInitialLoading ? (
-        <LoadingState label="Loading invoices" />
+        <TablePageSkeleton />
       ) : loadError ? (
         <div className="space-y-4">
           <ErrorState
@@ -344,6 +350,7 @@ export default function InvoicesPage() {
         clientId === "ALL" &&
         projectId === "ALL" ? (
         <EmptyState
+          icon={FileText}
           title="No invoices yet"
           description="Create your first invoice once client work is ready for billing."
         />
@@ -373,7 +380,6 @@ export default function InvoicesPage() {
           setEditInvoiceId(null);
         }}
         onSubmit={(values) => {
-          setNotice(null);
           saveInvoiceMutation.mutate(toInvoicePayload(values));
         }}
       />
@@ -406,7 +412,6 @@ export default function InvoicesPage() {
         }}
         onSubmit={(nextStatus) => {
           if (statusInvoice) {
-            setNotice(null);
             statusMutation.mutate({ invoice: statusInvoice, nextStatus });
           }
         }}
@@ -425,7 +430,6 @@ export default function InvoicesPage() {
         }}
         onConfirm={() => {
           if (cancelTarget) {
-            setNotice(null);
             cancelMutation.mutate(cancelTarget);
           }
         }}
@@ -482,7 +486,9 @@ function clientLabel(client?: Client) {
   if (!client) {
     return "Unknown client";
   }
-  return client.company_name ? `${client.name} · ${client.company_name}` : client.name;
+  return client.company_name
+    ? `${client.name} · ${client.company_name}`
+    : client.name;
 }
 
 function errorMessage(error: unknown) {

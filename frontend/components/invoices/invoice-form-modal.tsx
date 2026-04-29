@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, Plus, Trash2, X } from "lucide-react";
+import { Loader2, Plus, Trash2, Users, X } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
@@ -118,7 +118,8 @@ export function InvoiceFormModal({
     [projects, selectedClientId],
   );
   const subtotal = (watchedItems ?? []).reduce(
-    (sum, item) => sum + (Number(item.quantity) || 0) * (Number(item.unit_price) || 0),
+    (sum, item) =>
+      sum + (Number(item.quantity) || 0) * (Number(item.unit_price) || 0),
     0,
   );
   const total = Math.max(
@@ -156,13 +157,14 @@ export function InvoiceFormModal({
 
         {isLoading ? (
           <div className="p-5 sm:p-6">
-            <div className="linear-panel rounded-md border border-border px-4 py-3 text-sm text-muted-foreground">
+            <div className="wr-panel rounded-md border border-border px-4 py-3 text-sm text-muted-foreground">
               Loading invoice details...
             </div>
           </div>
         ) : activeClients.length === 0 ? (
           <div className="p-5 sm:p-6">
             <EmptyState
+              icon={Users}
               title="No active clients"
               description="Create or reactivate a client before creating an invoice."
             />
@@ -180,11 +182,11 @@ export function InvoiceFormModal({
             {error ? <ErrorState message={error} /> : null}
 
             <div className="grid gap-4 lg:grid-cols-4">
-              <Field error={form.formState.errors.client_id?.message} label="Client">
-                <Select
-                  disabled={isSubmitting}
-                  {...form.register("client_id")}
-                >
+              <Field
+                error={form.formState.errors.client_id?.message}
+                label="Client"
+              >
+                <Select disabled={isSubmitting} {...form.register("client_id")}>
                   {activeClients.map((client) => (
                     <option key={client.id} value={client.id}>
                       {clientLabel(client)}
@@ -193,7 +195,10 @@ export function InvoiceFormModal({
                 </Select>
               </Field>
 
-              <Field error={form.formState.errors.project_id?.message} label="Project">
+              <Field
+                error={form.formState.errors.project_id?.message}
+                label="Project"
+              >
                 <Select
                   disabled={isSubmitting}
                   {...form.register("project_id")}
@@ -207,11 +212,11 @@ export function InvoiceFormModal({
                 </Select>
               </Field>
 
-              <Field error={form.formState.errors.status?.message} label="Status">
-                <Select
-                  disabled={isSubmitting}
-                  {...form.register("status")}
-                >
+              <Field
+                error={form.formState.errors.status?.message}
+                label="Status"
+              >
+                <Select disabled={isSubmitting} {...form.register("status")}>
                   {INVOICE_STATUSES.map((status) => (
                     <option key={status} value={status}>
                       {formatStatus(status)}
@@ -220,7 +225,10 @@ export function InvoiceFormModal({
                 </Select>
               </Field>
 
-              <Field error={form.formState.errors.issue_date?.message} label="Issue date">
+              <Field
+                error={form.formState.errors.issue_date?.message}
+                label="Issue date"
+              >
                 <Input
                   disabled={isSubmitting}
                   type="date"
@@ -228,7 +236,10 @@ export function InvoiceFormModal({
                 />
               </Field>
 
-              <Field error={form.formState.errors.due_date?.message} label="Due date">
+              <Field
+                error={form.formState.errors.due_date?.message}
+                label="Due date"
+              >
                 <Input
                   disabled={isSubmitting}
                   type="date"
@@ -246,7 +257,10 @@ export function InvoiceFormModal({
                 />
               </Field>
 
-              <Field error={form.formState.errors.discount?.message} label="Discount">
+              <Field
+                error={form.formState.errors.discount?.message}
+                label="Discount"
+              >
                 <Input
                   disabled={isSubmitting}
                   min={0}
@@ -285,7 +299,10 @@ export function InvoiceFormModal({
                     key={field.id}
                   >
                     <Field
-                      error={form.formState.errors.items?.[index]?.description?.message}
+                      error={
+                        form.formState.errors.items?.[index]?.description
+                          ?.message
+                      }
                       label="Description"
                     >
                       <Input
@@ -294,7 +311,9 @@ export function InvoiceFormModal({
                       />
                     </Field>
                     <Field
-                      error={form.formState.errors.items?.[index]?.quantity?.message}
+                      error={
+                        form.formState.errors.items?.[index]?.quantity?.message
+                      }
                       label="Quantity"
                     >
                       <Input
@@ -308,7 +327,10 @@ export function InvoiceFormModal({
                       />
                     </Field>
                     <Field
-                      error={form.formState.errors.items?.[index]?.unit_price?.message}
+                      error={
+                        form.formState.errors.items?.[index]?.unit_price
+                          ?.message
+                      }
                       label="Unit price"
                     >
                       <Input
@@ -340,7 +362,12 @@ export function InvoiceFormModal({
 
             <div className="grid gap-3 rounded-md border border-border bg-muted/70 p-4 sm:grid-cols-3">
               <TotalPreview label="Subtotal" value={subtotal} />
-              <TotalPreview label="Tax less discount" value={(Number(watchedTax) || 0) - (Number(watchedDiscount) || 0)} />
+              <TotalPreview
+                label="Tax less discount"
+                value={
+                  (Number(watchedTax) || 0) - (Number(watchedDiscount) || 0)
+                }
+              />
               <TotalPreview label="Total" value={total} strong />
             </div>
 
@@ -355,7 +382,10 @@ export function InvoiceFormModal({
               </Button>
               <Button disabled={isSubmitting} type="submit">
                 {isSubmitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  <Loader2
+                    className="h-4 w-4 animate-spin"
+                    aria-hidden="true"
+                  />
                 ) : null}
                 {invoice ? "Save changes" : "Create invoice"}
               </Button>
@@ -397,7 +427,13 @@ function TotalPreview({
   return (
     <div>
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className={strong ? "text-xl font-semibold text-foreground" : "text-sm font-semibold text-foreground"}>
+      <p
+        className={
+          strong
+            ? "text-xl font-semibold text-foreground"
+            : "text-sm font-semibold text-foreground"
+        }
+      >
         {formatCurrencyDollars(value)}
       </p>
     </div>
@@ -405,7 +441,9 @@ function TotalPreview({
 }
 
 function clientLabel(client: Client) {
-  return client.company_name ? `${client.name} · ${client.company_name}` : client.name;
+  return client.company_name
+    ? `${client.name} · ${client.company_name}`
+    : client.name;
 }
 
 function formatCurrencyDollars(value: number) {

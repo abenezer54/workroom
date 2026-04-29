@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 
 export function MarketingLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="linear-app min-h-screen bg-background">
-      <header className="linear-header border-b border-sidebar-border bg-header">
+    <div className="wr-app min-h-screen bg-background">
+      <header className="wr-header border-b border-sidebar-border bg-header">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <AppLogo />
           <nav className="flex items-center gap-2">
