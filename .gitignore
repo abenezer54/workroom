@@ -27,6 +27,7 @@ coverage.html
 # Node/frontend artifacts
 node_modules/
 .next/
+*.tsbuildinfo
 out/
 dist/
 build/
