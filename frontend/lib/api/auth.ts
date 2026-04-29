@@ -17,7 +17,11 @@ export function login(request: LoginRequest) {
 export function register(request: RegisterRequest) {
   return apiClient<AuthResponse>("/auth/register", {
     method: "POST",
-    body: request,
+    body: {
+      name: request.name,
+      email: request.email,
+      password: request.password,
+    },
   });
 }
 

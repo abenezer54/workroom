@@ -1,10 +1,16 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContext, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 import type { AuthResponse, CurrentUser } from "@/lib/api/types";
 import { me } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 import {
   clearStoredToken,
   getStoredToken,
@@ -28,15 +34,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const currentUserQuery = useQuery({
     queryKey: ["me", token],
-    queryFn: () => me(token),
+    async queryFn() {
+      try {
+        return await me(token);
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 401) {
+          clearStoredToken();
+          setToken(null);
+          queryClient.clear();
+        }
+
+        throw error;
+      }
+    },
     enabled: Boolean(token),
+    retry(failureCount, error) {
+      if (error instanceof ApiError && error.status === 401) {
+        return false;
+      }
+
+      return failureCount < 1;
+    },
   });
 
   const value = useMemo<AuthContextValue>(
     () => ({
       user: currentUserQuery.data ?? null,
       token,
-      isLoading: Boolean(token) && currentUserQuery.isLoading,
+      isLoading:
+        Boolean(token) &&
+        (currentUserQuery.isLoading || currentUserQuery.isFetching),
       isAuthenticated: Boolean(token && currentUserQuery.data),
       setSession(session) {
         storeToken(session.access_token);
@@ -51,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       currentUserQuery.data,
+      currentUserQuery.isFetching,
       currentUserQuery.isLoading,
       queryClient,
       token,

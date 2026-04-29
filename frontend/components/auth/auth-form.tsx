@@ -2,9 +2,10 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 import { ErrorState } from "@/components/shared/error-state";
@@ -29,7 +30,7 @@ type AuthFormProps = {
 
 export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
-  const { setSession } = useAuth();
+  const { isLoading, setSession, user } = useAuth();
   const isLogin = mode === "login";
 
   const loginForm = useForm<LoginValues>({
@@ -46,8 +47,15 @@ export function AuthForm({ mode }: AuthFormProps) {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.replace(dashboardPathForRole(user.role));
+    }
+  }, [isLoading, router, user]);
 
   const mutation = useMutation({
     mutationFn: (values: LoginValues | RegisterValues) =>
@@ -68,6 +76,30 @@ export function AuthForm({ mode }: AuthFormProps) {
       : mutation.error
         ? "The request could not be completed."
         : null;
+  const isPending = mutation.isPending;
+
+  function fillDemoAccount(email: string) {
+    loginForm.setValue("email", email, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    loginForm.setValue("password", "password123", {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+  }
+
+  if (!isLoading && user) {
+    return (
+      <Card>
+        <CardContent className="p-5">
+          <p className="text-sm text-muted-foreground">
+            Redirecting to your workspace...
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -80,7 +112,12 @@ export function AuthForm({ mode }: AuthFormProps) {
           {!isLogin ? (
             <div className="space-y-2">
               <Label htmlFor="name">Name</Label>
-              <Input id="name" autoComplete="name" {...registerForm.register("name")} />
+              <Input
+                id="name"
+                autoComplete="name"
+                disabled={isPending}
+                {...registerForm.register("name")}
+              />
               {registerForm.formState.errors.name ? (
                 <p className="text-xs text-destructive">
                   {registerForm.formState.errors.name.message}
@@ -95,6 +132,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               id="email"
               type="email"
               autoComplete="email"
+              disabled={isPending}
               {...(isLogin
                 ? loginForm.register("email")
                 : registerForm.register("email"))}
@@ -117,6 +155,7 @@ export function AuthForm({ mode }: AuthFormProps) {
               id="password"
               type="password"
               autoComplete={isLogin ? "current-password" : "new-password"}
+              disabled={isPending}
               {...(isLogin
                 ? loginForm.register("password")
                 : registerForm.register("password"))}
@@ -133,11 +172,73 @@ export function AuthForm({ mode }: AuthFormProps) {
             ) : null}
           </div>
 
-          <Button className="w-full" type="submit" disabled={mutation.isPending}>
-            {isLogin ? "Log in" : "Create account"}
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          {!isLogin ? (
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                autoComplete="new-password"
+                disabled={isPending}
+                {...registerForm.register("confirmPassword")}
+              />
+              {registerForm.formState.errors.confirmPassword ? (
+                <p className="text-xs text-destructive">
+                  {registerForm.formState.errors.confirmPassword.message}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
+
+          <Button className="w-full" type="submit" disabled={isPending}>
+            {isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            ) : null}
+            {isLogin
+              ? isPending
+                ? "Logging in"
+                : "Log in"
+              : isPending
+                ? "Creating account"
+                : "Create account"}
+            {!isPending ? (
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            ) : null}
           </Button>
         </form>
+
+        {isLogin ? (
+          <div className="rounded-md border border-border bg-muted p-3">
+            <p className="text-xs font-medium text-foreground">
+              Demo accounts
+            </p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                disabled={isPending}
+                onClick={() => fillDemoAccount("admin@workroom.demo")}
+              >
+                Admin demo
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                disabled={isPending}
+                onClick={() => fillDemoAccount("client@workroom.demo")}
+              >
+                Client demo
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <p className="rounded-md border border-border bg-muted p-3 text-xs leading-5 text-muted-foreground">
+            Registration creates an agency admin account. Client users are
+            managed from the agency workspace in a later feature phase.
+          </p>
+        )}
 
         <p className="text-center text-sm text-muted-foreground">
           {isLogin ? "Need an agency account?" : "Already have an account?"}{" "}
