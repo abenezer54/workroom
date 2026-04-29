@@ -25,8 +25,9 @@ type UpdateTaskRequest struct {
 }
 
 type TaskListQuery struct {
-	Status   string `form:"status" binding:"omitempty,oneof=TODO IN_PROGRESS DONE"`
-	Priority string `form:"priority" binding:"omitempty,oneof=LOW MEDIUM HIGH URGENT"`
+	Status    string `form:"status" binding:"omitempty,oneof=TODO IN_PROGRESS DONE"`
+	Priority  string `form:"priority" binding:"omitempty,oneof=LOW MEDIUM HIGH URGENT"`
+	ProjectID string `form:"project_id" binding:"omitempty,uuid"`
 }
 
 type TaskResponse struct {
@@ -40,6 +41,20 @@ type TaskResponse struct {
 	DueDate     *string             `json:"due_date,omitempty"`
 	CreatedAt   time.Time           `json:"created_at"`
 	UpdatedAt   time.Time           `json:"updated_at"`
+}
+
+type AgencyTaskResponse struct {
+	ID           uuid.UUID           `json:"id"`
+	AgencyID     uuid.UUID           `json:"agency_id"`
+	ProjectID    uuid.UUID           `json:"project_id"`
+	ProjectTitle string              `json:"project_title"`
+	Title        string              `json:"title"`
+	Description  *string             `json:"description,omitempty"`
+	Status       models.TaskStatus   `json:"status"`
+	Priority     models.TaskPriority `json:"priority"`
+	DueDate      *string             `json:"due_date,omitempty"`
+	CreatedAt    time.Time           `json:"created_at"`
+	UpdatedAt    time.Time           `json:"updated_at"`
 }
 
 func ToTaskResponse(task models.Task) TaskResponse {

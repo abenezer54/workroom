@@ -20,6 +20,32 @@ func NewProjectUpdateHandler(updates services.ProjectUpdateService) *ProjectUpda
 	return &ProjectUpdateHandler{updates: updates}
 }
 
+func (h *ProjectUpdateHandler) ListAll(c *gin.Context) {
+	agencyID, ok := agencyIDFromContext(c)
+	if !ok {
+		return
+	}
+
+	var projectID *uuid.UUID
+	projectIDValue := c.Query("project_id")
+	if projectIDValue != "" {
+		parsedProjectID, err := uuid.Parse(projectIDValue)
+		if err != nil {
+			response.Error(c, http.StatusBadRequest, "BAD_REQUEST", "Invalid project id", nil)
+			return
+		}
+		projectID = &parsedProjectID
+	}
+
+	updates, err := h.updates.ListAllForAgency(agencyID, projectID)
+	if err != nil {
+		respondAppError(c, err)
+		return
+	}
+
+	response.OK(c, updates)
+}
+
 func (h *ProjectUpdateHandler) ListByProject(c *gin.Context) {
 	projectID, ok := projectIDFromProjectParam(c)
 	if !ok {

@@ -223,7 +223,7 @@ func seedClients(tx *gorm.DB, state *seedState) error {
 			Status:      models.ClientStatusActive,
 		}
 
-		if err := upsertByScope(tx, &models.Client{}, &client, "agency_id = ? AND name = ?", state.admin.ID, seed.Name); err != nil {
+		if err := upsertByScope(tx, &models.Client{}, &client, "agency_id = ? AND (name = ? OR LOWER(email) = LOWER(?))", state.admin.ID, seed.Name, seed.Email); err != nil {
 			return fmt.Errorf("seed client %s: %w", seed.Name, err)
 		}
 

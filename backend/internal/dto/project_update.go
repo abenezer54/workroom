@@ -28,6 +28,18 @@ type ProjectUpdateResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type AgencyProjectUpdateResponse struct {
+	ID           uuid.UUID `json:"id"`
+	AgencyID     uuid.UUID `json:"agency_id"`
+	ProjectID    uuid.UUID `json:"project_id"`
+	ProjectTitle string    `json:"project_title"`
+	Title        string    `json:"title"`
+	Content      string    `json:"content"`
+	CreatedBy    uuid.UUID `json:"created_by"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
 func ToProjectUpdateResponse(update models.ProjectUpdate) ProjectUpdateResponse {
 	return ProjectUpdateResponse{
 		ID:        update.ID,

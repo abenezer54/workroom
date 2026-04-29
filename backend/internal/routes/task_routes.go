@@ -17,6 +17,7 @@ func RegisterTaskRoutes(api *gin.RouterGroup, handler *handlers.TaskHandler, jwt
 
 	tasks := api.Group("/tasks")
 	tasks.Use(middleware.Auth(jwtService), middleware.RequireRole(models.RoleAgencyAdmin))
+	tasks.GET("", handler.ListAll)
 	tasks.PATCH("/:id", handler.Update)
 	tasks.DELETE("/:id", handler.Delete)
 }

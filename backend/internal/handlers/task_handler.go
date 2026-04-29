@@ -20,6 +20,27 @@ func NewTaskHandler(tasks services.TaskService) *TaskHandler {
 	return &TaskHandler{tasks: tasks}
 }
 
+func (h *TaskHandler) ListAll(c *gin.Context) {
+	agencyID, ok := agencyIDFromContext(c)
+	if !ok {
+		return
+	}
+
+	var query dto.TaskListQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		respondValidationError(c, err)
+		return
+	}
+
+	tasks, err := h.tasks.ListAllForAgency(agencyID, query)
+	if err != nil {
+		respondAppError(c, err)
+		return
+	}
+
+	response.OK(c, tasks)
+}
+
 func (h *TaskHandler) ListByProject(c *gin.Context) {
 	projectID, ok := projectIDFromProjectParam(c)
 	if !ok {

@@ -19,6 +19,10 @@ export type Task = {
   updated_at: string;
 };
 
+export type AgencyTask = Task & {
+  project_title: string;
+};
+
 export type TaskFilters = {
   status?: TaskStatus | "ALL";
   priority?: TaskPriority | "ALL";
@@ -51,6 +55,28 @@ export function getProjectTasks(projectId: string, filters: TaskFilters = {}) {
       method: "GET",
     },
   );
+}
+
+export function getTasks(filters: TaskFilters & { project_id?: string | "ALL" } = {}) {
+  const params = new URLSearchParams();
+
+  if (filters.status && filters.status !== "ALL") {
+    params.set("status", filters.status);
+  }
+
+  if (filters.priority && filters.priority !== "ALL") {
+    params.set("priority", filters.priority);
+  }
+
+  if (filters.project_id && filters.project_id !== "ALL") {
+    params.set("project_id", filters.project_id);
+  }
+
+  const query = params.toString();
+
+  return apiClient<AgencyTask[]>(`/tasks${query ? `?${query}` : ""}`, {
+    method: "GET",
+  });
 }
 
 export function createTask(projectId: string, payload: TaskPayload) {

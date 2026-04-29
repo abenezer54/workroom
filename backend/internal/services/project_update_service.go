@@ -12,6 +12,7 @@ import (
 )
 
 type ProjectUpdateService interface {
+	ListAllForAgency(agencyID uuid.UUID, projectID *uuid.UUID) ([]dto.AgencyProjectUpdateResponse, error)
 	ListForAgency(agencyID uuid.UUID, projectID uuid.UUID) ([]dto.ProjectUpdateResponse, error)
 	ListForClient(clientID uuid.UUID, projectID uuid.UUID) ([]dto.ProjectUpdateResponse, error)
 	ListRecent(agencyID uuid.UUID, limit int) ([]dto.ProjectUpdateResponse, error)
@@ -28,6 +29,40 @@ func NewProjectUpdateService(updates repositories.ProjectUpdateRepository, proje
 		updates:  updates,
 		projects: projects,
 	}
+}
+
+func (s *projectUpdateService) ListAllForAgency(agencyID uuid.UUID, projectID *uuid.UUID) ([]dto.AgencyProjectUpdateResponse, error) {
+	if projectID != nil {
+		project, err := s.projects.FindByIDAndAgency(*projectID, agencyID)
+		if err != nil {
+			return nil, apperrors.Internal("Could not validate project ownership")
+		}
+		if project == nil {
+			return nil, apperrors.NotFound("Project not found")
+		}
+	}
+
+	updates, err := s.updates.ListByAgency(agencyID, projectID)
+	if err != nil {
+		return nil, apperrors.Internal("Could not list project updates")
+	}
+
+	responses := make([]dto.AgencyProjectUpdateResponse, 0, len(updates))
+	for _, update := range updates {
+		responses = append(responses, dto.AgencyProjectUpdateResponse{
+			ID:           update.ID,
+			AgencyID:     update.AgencyID,
+			ProjectID:    update.ProjectID,
+			ProjectTitle: update.ProjectTitle,
+			Title:        update.Title,
+			Content:      update.Content,
+			CreatedBy:    update.CreatedBy,
+			CreatedAt:    update.CreatedAt,
+			UpdatedAt:    update.UpdatedAt,
+		})
+	}
+
+	return responses, nil
 }
 
 func (s *projectUpdateService) ListForAgency(agencyID uuid.UUID, projectID uuid.UUID) ([]dto.ProjectUpdateResponse, error) {

@@ -17,5 +17,6 @@ func RegisterProjectUpdateRoutes(api *gin.RouterGroup, handler *handlers.Project
 
 	updates := api.Group("/updates")
 	updates.Use(middleware.Auth(jwtService), middleware.RequireRole(models.RoleAgencyAdmin))
+	updates.GET("", handler.ListAll)
 	updates.GET("/recent", handler.Recent)
 }

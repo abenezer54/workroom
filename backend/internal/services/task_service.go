@@ -2,6 +2,7 @@ package services
 
 import (
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -12,6 +13,7 @@ import (
 )
 
 type TaskService interface {
+	ListAllForAgency(agencyID uuid.UUID, query dto.TaskListQuery) ([]dto.AgencyTaskResponse, error)
 	ListForAgency(agencyID uuid.UUID, projectID uuid.UUID, query dto.TaskListQuery) ([]dto.TaskResponse, error)
 	ListForClient(clientID uuid.UUID, projectID uuid.UUID, query dto.TaskListQuery) ([]dto.TaskResponse, error)
 	Create(agencyID uuid.UUID, projectID uuid.UUID, req dto.CreateTaskRequest) (*dto.TaskResponse, error)
@@ -29,6 +31,43 @@ func NewTaskService(tasks repositories.TaskRepository, projects repositories.Pro
 		tasks:    tasks,
 		projects: projects,
 	}
+}
+
+func (s *taskService) ListAllForAgency(agencyID uuid.UUID, query dto.TaskListQuery) ([]dto.AgencyTaskResponse, error) {
+	filters := taskFiltersFromQuery(query)
+
+	tasks, err := s.tasks.ListByAgency(agencyID, filters)
+	if err != nil {
+		return nil, apperrors.Internal("Could not list tasks")
+	}
+
+	responses := make([]dto.AgencyTaskResponse, 0, len(tasks))
+	for _, task := range tasks {
+		responses = append(responses, dto.AgencyTaskResponse{
+			ID:           task.ID,
+			AgencyID:     task.AgencyID,
+			ProjectID:    task.ProjectID,
+			ProjectTitle: task.ProjectTitle,
+			Title:        task.Title,
+			Description:  task.Description,
+			Status:       task.Status,
+			Priority:     task.Priority,
+			DueDate:      formatTaskDate(task.DueDate),
+			CreatedAt:    task.CreatedAt,
+			UpdatedAt:    task.UpdatedAt,
+		})
+	}
+
+	return responses, nil
+}
+
+func formatTaskDate(value *time.Time) *string {
+	if value == nil {
+		return nil
+	}
+
+	formatted := value.Format("2006-01-02")
+	return &formatted
 }
 
 func (s *taskService) ListForAgency(agencyID uuid.UUID, projectID uuid.UUID, query dto.TaskListQuery) ([]dto.TaskResponse, error) {
@@ -151,6 +190,17 @@ func (s *taskService) Delete(agencyID uuid.UUID, taskID uuid.UUID) error {
 }
 
 func (s *taskService) listByProject(projectID uuid.UUID, query dto.TaskListQuery) ([]dto.TaskResponse, error) {
+	filters := taskFiltersFromQuery(query)
+
+	tasks, err := s.tasks.ListByProject(projectID, filters)
+	if err != nil {
+		return nil, apperrors.Internal("Could not list tasks")
+	}
+
+	return dto.ToTaskResponses(tasks), nil
+}
+
+func taskFiltersFromQuery(query dto.TaskListQuery) repositories.TaskFilters {
 	filters := repositories.TaskFilters{}
 
 	if query.Status != "" {
@@ -161,11 +211,12 @@ func (s *taskService) listByProject(projectID uuid.UUID, query dto.TaskListQuery
 		priority := models.TaskPriority(query.Priority)
 		filters.Priority = &priority
 	}
-
-	tasks, err := s.tasks.ListByProject(projectID, filters)
-	if err != nil {
-		return nil, apperrors.Internal("Could not list tasks")
+	if query.ProjectID != "" {
+		projectID, err := uuid.Parse(query.ProjectID)
+		if err == nil {
+			filters.ProjectID = &projectID
+		}
 	}
 
-	return dto.ToTaskResponses(tasks), nil
+	return filters
 }

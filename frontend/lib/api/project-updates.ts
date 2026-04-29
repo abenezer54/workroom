@@ -11,6 +11,10 @@ export type ProjectUpdate = {
   updated_at: string;
 };
 
+export type AgencyProjectUpdate = ProjectUpdate & {
+  project_title: string;
+};
+
 export type ProjectUpdatePayload = {
   title: string;
   content: string;
@@ -18,6 +22,20 @@ export type ProjectUpdatePayload = {
 
 export function getProjectUpdates(projectId: string) {
   return apiClient<ProjectUpdate[]>(`/projects/${projectId}/updates`, {
+    method: "GET",
+  });
+}
+
+export function getUpdates(filters: { project_id?: string | "ALL" } = {}) {
+  const params = new URLSearchParams();
+
+  if (filters.project_id && filters.project_id !== "ALL") {
+    params.set("project_id", filters.project_id);
+  }
+
+  const query = params.toString();
+
+  return apiClient<AgencyProjectUpdate[]>(`/updates${query ? `?${query}` : ""}`, {
     method: "GET",
   });
 }
