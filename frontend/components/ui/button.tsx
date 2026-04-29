@@ -5,23 +5,25 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex h-10 items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-[background-color,border-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/25 disabled:pointer-events-none disabled:opacity-55 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-[#111827]",
+        default:
+          "border border-primary bg-primary text-primary-foreground shadow-[0_1px_1px_rgba(15,23,42,0.08)] hover:bg-primary-hover",
         secondary:
-          "border border-border bg-card text-foreground hover:bg-muted",
-        accent: "bg-accent text-accent-foreground hover:bg-[#5C6A50]",
+          "border border-border bg-card text-foreground shadow-[0_1px_1px_rgba(15,23,42,0.04)] hover:border-input hover:bg-muted",
+        accent:
+          "border border-accent bg-accent text-accent-foreground shadow-[0_1px_1px_rgba(15,23,42,0.08)] hover:bg-accent-hover",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-[#A53F3D]",
-        ghost: "text-foreground hover:bg-muted",
+          "border border-destructive bg-destructive text-destructive-foreground shadow-[0_1px_1px_rgba(15,23,42,0.08)] hover:bg-destructive-hover",
+        ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
       },
       size: {
-        default: "h-10 px-4",
-        sm: "h-9 px-3",
-        lg: "h-11 px-5",
-        icon: "h-10 w-10 px-0",
+        default: "h-9 px-3.5",
+        sm: "h-8 px-3 text-xs",
+        lg: "h-10 px-4",
+        icon: "h-9 w-9 px-0",
       },
     },
     defaultVariants: {

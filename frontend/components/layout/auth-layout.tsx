@@ -11,17 +11,24 @@ type AuthLayoutProps = {
 export function AuthLayout({ title, description, children }: AuthLayoutProps) {
   return (
     <main className="flex min-h-screen bg-background">
-      <section className="hidden flex-1 border-r border-border bg-muted px-10 py-8 lg:flex lg:flex-col">
-        <AppLogo />
+      <section className="hidden flex-1 border-r border-sidebar-border bg-sidebar px-10 py-8 lg:flex lg:flex-col">
+        <AppLogo variant="dark" />
         <div className="mt-auto max-w-md space-y-4 pb-8">
-          <p className="text-sm font-medium text-accent">Client work, organized</p>
-          <h1 className="text-3xl font-semibold leading-tight text-foreground">
+          <p className="text-sm font-medium text-sidebar-muted">
+            Client work, organized
+          </p>
+          <h1 className="text-3xl font-semibold leading-tight text-sidebar-foreground">
             A calm workspace for project updates, tasks, and invoices.
           </h1>
-          <p className="text-sm leading-6 text-muted-foreground">
+          <p className="text-sm leading-6 text-sidebar-muted">
             Workroom keeps agency operations and client visibility in one
             focused portal.
           </p>
+          <div className="grid gap-2 pt-4">
+            <div className="h-2 w-36 rounded-full bg-white/[0.12]" />
+            <div className="h-2 w-52 rounded-full bg-white/10" />
+            <div className="h-2 w-28 rounded-full bg-accent/80" />
+          </div>
         </div>
       </section>
       <section className="flex flex-1 items-center justify-center px-6 py-10">

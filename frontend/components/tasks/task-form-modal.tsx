@@ -7,8 +7,18 @@ import { useForm } from "react-hook-form";
 
 import { ErrorState } from "@/components/shared/error-state";
 import { Button } from "@/components/ui/button";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import {
   TASK_PRIORITIES,
   TASK_STATUSES,
@@ -69,20 +79,14 @@ export function TaskFormModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 px-4 py-6">
-      <section
-        aria-modal="true"
-        className="max-h-[calc(100vh-3rem)] w-full max-w-xl overflow-y-auto rounded-lg border border-border bg-card"
-        role="dialog"
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+    <DialogOverlay>
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-foreground">
-              {task ? "Edit Task" : "Add Task"}
-            </h2>
-            <p className="text-sm leading-6 text-muted-foreground">
+            <DialogTitle>{task ? "Edit Task" : "Add Task"}</DialogTitle>
+            <DialogDescription>
               Track a task or milestone tied to this project.
-            </p>
+            </DialogDescription>
           </div>
           <Button
             aria-label="Close"
@@ -94,10 +98,10 @@ export function TaskFormModal({
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </Button>
-        </div>
+        </DialogHeader>
 
         <form
-          className="space-y-5 px-5 py-5"
+          className="space-y-5 px-5 py-5 sm:px-6"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           {error ? <ErrorState message={error} /> : null}
@@ -122,8 +126,7 @@ export function TaskFormModal({
               error={form.formState.errors.status?.message}
               label="Status"
             >
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50"
+              <Select
                 disabled={isSubmitting}
                 {...form.register("status")}
               >
@@ -132,15 +135,14 @@ export function TaskFormModal({
                     {formatStatus(status)}
                   </option>
                 ))}
-              </select>
+              </Select>
             </Field>
 
             <Field
               error={form.formState.errors.priority?.message}
               label="Priority"
             >
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50"
+              <Select
                 disabled={isSubmitting}
                 {...form.register("priority")}
               >
@@ -149,7 +151,7 @@ export function TaskFormModal({
                     {formatStatus(priority)}
                   </option>
                 ))}
-              </select>
+              </Select>
             </Field>
           </div>
 
@@ -157,14 +159,13 @@ export function TaskFormModal({
             error={form.formState.errors.description?.message}
             label="Description"
           >
-            <textarea
-              className="min-h-28 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50"
+            <Textarea
               disabled={isSubmitting}
               {...form.register("description")}
             />
           </Field>
 
-          <div className="flex flex-col-reverse gap-2 border-t border-border pt-5 sm:flex-row sm:justify-end">
+          <DialogFooter>
             <Button
               disabled={isSubmitting}
               onClick={onClose}
@@ -179,10 +180,10 @@ export function TaskFormModal({
               ) : null}
               {task ? "Save changes" : "Create task"}
             </Button>
-          </div>
+          </DialogFooter>
         </form>
-      </section>
-    </div>
+      </DialogContent>
+    </DialogOverlay>
   );
 }
 

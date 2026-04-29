@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { ApiError } from "@/lib/api/client";
 import {
   archiveClient,
@@ -175,7 +176,7 @@ export default function ClientsPage() {
       />
 
       {notice ? (
-        <div className="rounded-md border border-[#D7E7DA] bg-[#E7F1E9] px-4 py-3 text-sm text-[#3F6B4F]">
+        <div className="rounded-md border border-success-border bg-success-soft px-4 py-3 text-sm text-success">
           {notice}
         </div>
       ) : null}
@@ -200,8 +201,7 @@ export default function ClientsPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="client-status">Status</Label>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20"
+            <Select
               id="client-status"
               onChange={(event) => setStatus(event.target.value as StatusFilter)}
               value={status}
@@ -212,7 +212,7 @@ export default function ClientsPage() {
                   {formatStatus(clientStatus)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </CardContent>
       </Card>

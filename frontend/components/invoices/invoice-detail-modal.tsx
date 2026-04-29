@@ -5,6 +5,19 @@ import { X } from "lucide-react";
 import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DialogContent,
+  DialogHeader,
+  DialogOverlay,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { Client } from "@/lib/api/clients";
 import type { Invoice } from "@/lib/api/invoices";
 import type { Project } from "@/lib/api/projects";
@@ -27,13 +40,9 @@ export function InvoiceDetailModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 px-4 py-6">
-      <section
-        aria-modal="true"
-        className="max-h-[calc(100vh-3rem)] w-full max-w-3xl overflow-y-auto rounded-lg border border-border bg-card"
-        role="dialog"
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+    <DialogOverlay>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="text-lg font-semibold text-foreground">
@@ -54,9 +63,9 @@ export function InvoiceDetailModal({
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </Button>
-        </div>
+        </DialogHeader>
 
-        <div className="space-y-5 px-5 py-5">
+        <div className="space-y-5 px-5 py-5 sm:px-6">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Summary label="Issue date" value={formatDate(invoice.issue_date)} />
             <Summary label="Due date" value={formatDate(invoice.due_date)} />
@@ -70,28 +79,28 @@ export function InvoiceDetailModal({
             </CardHeader>
             <CardContent>
               <div className="overflow-hidden rounded-md border border-border">
-                <table className="w-full text-left text-sm">
-                  <thead className="bg-muted text-xs font-medium text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-3">Description</th>
-                      <th className="px-4 py-3">Quantity</th>
-                      <th className="px-4 py-3">Unit price</th>
-                      <th className="px-4 py-3">Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
+                <Table className="min-w-[620px]">
+                  <TableHeader>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead>Description</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Unit price</TableHead>
+                      <TableHead>Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {(invoice.items ?? []).map((item) => (
-                      <tr key={item.id}>
-                        <td className="px-4 py-3">{item.description}</td>
-                        <td className="px-4 py-3">{item.quantity}</td>
-                        <td className="px-4 py-3">{formatCurrency(item.unit_price)}</td>
-                        <td className="px-4 py-3 font-medium">
+                      <TableRow key={item.id}>
+                        <TableCell>{item.description}</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell>{formatCurrency(item.unit_price)}</TableCell>
+                        <TableCell className="font-medium">
                           {formatCurrency(item.amount)}
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
               <div className="mt-4 grid gap-2 sm:ml-auto sm:max-w-xs">
                 <TotalRow label="Subtotal" value={invoice.subtotal} />
@@ -102,8 +111,8 @@ export function InvoiceDetailModal({
             </CardContent>
           </Card>
         </div>
-      </section>
-    </div>
+      </DialogContent>
+    </DialogOverlay>
   );
 }
 

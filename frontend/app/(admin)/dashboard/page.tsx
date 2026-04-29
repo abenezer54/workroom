@@ -20,6 +20,14 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ApiError } from "@/lib/api/client";
 import {
   getAdminDashboard,
@@ -134,42 +142,42 @@ function RecentProjects({ projects }: { projects: AdminDashboardProject[] }) {
           />
         ) : (
           <div className="overflow-hidden rounded-md border border-border">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted text-xs font-medium text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">Project</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Deadline</th>
-                  <th className="px-4 py-3">Progress</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border bg-card">
+            <Table className="min-w-[680px]">
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Project</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Deadline</TableHead>
+                  <TableHead>Progress</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {projects.map((project) => (
-                  <tr key={project.id}>
-                    <td className="px-4 py-3 align-top">
+                  <TableRow key={project.id}>
+                    <TableCell className="align-top">
                       <p className="font-medium text-foreground">
                         {project.title}
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {project.client_name}
                       </p>
-                    </td>
-                    <td className="px-4 py-3 align-top">
+                    </TableCell>
+                    <TableCell className="align-top">
                       <StatusBadge status={project.status} />
-                    </td>
-                    <td className="px-4 py-3 align-top text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="align-top text-muted-foreground">
                       {formatDate(project.deadline)}
-                    </td>
-                    <td className="min-w-36 px-4 py-3 align-top">
+                    </TableCell>
+                    <TableCell className="min-w-36 align-top">
                       <ProgressBar value={project.progress} />
                       <p className="mt-1 text-xs text-muted-foreground">
                         {project.progress}% complete
                       </p>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         )}
       </CardContent>
@@ -301,7 +309,7 @@ function InvoiceOverview({ dashboard }: { dashboard: AdminDashboard }) {
           {counts.map((item) => (
             <div
               key={item.label}
-              className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted px-3 py-2"
+              className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/70 px-3 py-2"
             >
               <StatusBadge status={item.status} />
               <span className="text-sm font-semibold text-foreground">
@@ -325,7 +333,7 @@ function InvoiceAmount({
   helper: string;
 }) {
   return (
-    <div className="rounded-md border border-border px-4 py-3">
+    <div className="rounded-md border border-border bg-card px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-foreground">{label}</p>
@@ -349,8 +357,8 @@ function SectionEmpty({
   description: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border bg-muted px-6 py-10 text-center">
-      <span className="flex h-10 w-10 items-center justify-center rounded-md bg-card text-muted-foreground">
+    <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border bg-muted/60 px-6 py-10 text-center">
+      <span className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card text-muted-foreground">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
       <h2 className="mt-3 text-sm font-semibold text-foreground">{title}</h2>

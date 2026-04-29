@@ -19,6 +19,7 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import {
   getClientInvoices,
   getClientProjects,
@@ -119,8 +120,7 @@ export default function ClientInvoicesPage() {
         <CardContent className="grid gap-4 p-5 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="client-invoice-status">Status</Label>
-            <select
-              className="h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent-soft"
+            <Select
               id="client-invoice-status"
               onChange={(event) =>
                 setStatus(event.target.value as InvoiceStatus | "ALL")
@@ -133,12 +133,11 @@ export default function ClientInvoicesPage() {
                   {formatStatus(invoiceStatus)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
           <div className="space-y-2">
             <Label htmlFor="client-invoice-project">Project</Label>
-            <select
-              className="h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent-soft"
+            <Select
               disabled={projectsQuery.isLoading}
               id="client-invoice-project"
               onChange={(event) => setProjectId(event.target.value)}
@@ -150,7 +149,7 @@ export default function ClientInvoicesPage() {
                   {project.title}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </CardContent>
       </Card>

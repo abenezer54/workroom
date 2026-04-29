@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { getClientProjects } from "@/lib/api/client-portal";
 import { PROJECT_STATUSES, type ProjectStatus } from "@/lib/api/projects";
 
@@ -58,8 +59,7 @@ export default function ClientProjectsPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="client-project-status">Status</Label>
-            <select
-              className="h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground outline-none transition-colors focus:border-accent focus:ring-2 focus:ring-accent-soft"
+            <Select
               id="client-project-status"
               onChange={(event) =>
                 setStatus(event.target.value as ProjectStatus | "ALL")
@@ -72,7 +72,7 @@ export default function ClientProjectsPage() {
                   {formatStatus(projectStatus)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </CardContent>
       </Card>

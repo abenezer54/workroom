@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { ApiError } from "@/lib/api/client";
 import { getClients, type Client } from "@/lib/api/clients";
 import {
@@ -223,7 +224,7 @@ export default function ProjectsPage() {
       />
 
       {notice ? (
-        <div className="rounded-md border border-[#D7E7DA] bg-[#E7F1E9] px-4 py-3 text-sm text-[#3F6B4F]">
+        <div className="rounded-md border border-success-border bg-success-soft px-4 py-3 text-sm text-success">
           {notice}
         </div>
       ) : null}
@@ -249,8 +250,7 @@ export default function ProjectsPage() {
 
           <div className="space-y-2">
             <Label htmlFor="project-status">Status</Label>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20"
+            <Select
               id="project-status"
               onChange={(event) => setStatus(event.target.value as StatusFilter)}
               value={status}
@@ -261,13 +261,12 @@ export default function ProjectsPage() {
                   {formatStatus(projectStatus)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="project-client">Client</Label>
-            <select
-              className="flex h-10 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20"
+            <Select
               disabled={clientsQuery.isLoading}
               id="project-client"
               onChange={(event) => setClientId(event.target.value)}
@@ -279,7 +278,7 @@ export default function ProjectsPage() {
                   {clientLabel(client)}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
         </CardContent>
       </Card>

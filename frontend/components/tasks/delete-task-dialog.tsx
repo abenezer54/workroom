@@ -4,6 +4,15 @@ import { Loader2 } from "lucide-react";
 
 import { ErrorState } from "@/components/shared/error-state";
 import { Button } from "@/components/ui/button";
+import {
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { Task } from "@/lib/api/tasks";
 
 type DeleteTaskDialogProps = {
@@ -26,23 +35,19 @@ export function DeleteTaskDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 px-4 py-6">
-      <section
-        aria-modal="true"
-        className="w-full max-w-md rounded-lg border border-border bg-card"
-        role="dialog"
-      >
-        <div className="space-y-2 border-b border-border px-5 py-4">
-          <h2 className="text-lg font-semibold text-foreground">
-            Delete Task
-          </h2>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Delete {task.title}? This removes the task from the project.
-          </p>
-        </div>
-        <div className="space-y-5 px-5 py-5">
+    <DialogOverlay>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <div className="space-y-1">
+            <DialogTitle>Delete Task</DialogTitle>
+            <DialogDescription>
+              Delete {task.title}? This removes the task from the project.
+            </DialogDescription>
+          </div>
+        </DialogHeader>
+        <DialogBody className="space-y-5">
           {error ? <ErrorState message={error} /> : null}
-          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <DialogFooter className="border-t-0 pt-0">
             <Button
               disabled={isDeleting}
               onClick={onCancel}
@@ -62,9 +67,9 @@ export function DeleteTaskDialog({
               ) : null}
               Delete
             </Button>
-          </div>
-        </div>
-      </section>
-    </div>
+          </DialogFooter>
+        </DialogBody>
+      </DialogContent>
+    </DialogOverlay>
   );
 }

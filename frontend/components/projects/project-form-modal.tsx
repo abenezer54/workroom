@@ -8,8 +8,18 @@ import { useForm } from "react-hook-form";
 import { EmptyState } from "@/components/shared/empty-state";
 import { ErrorState } from "@/components/shared/error-state";
 import { Button } from "@/components/ui/button";
+import {
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import type { Client } from "@/lib/api/clients";
 import { PROJECT_STATUSES, type Project } from "@/lib/api/projects";
 import {
@@ -86,18 +96,12 @@ export function ProjectFormModal({
     : "Create a project tied to an active client.";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 px-4 py-6">
-      <section
-        aria-modal="true"
-        className="max-h-[calc(100vh-3rem)] w-full max-w-2xl overflow-y-auto rounded-lg border border-border bg-card"
-        role="dialog"
-      >
-        <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4">
+    <DialogOverlay>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-            <p className="text-sm leading-6 text-muted-foreground">
-              {description}
-            </p>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
           </div>
           <Button
             aria-label="Close"
@@ -109,10 +113,10 @@ export function ProjectFormModal({
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </Button>
-        </div>
+        </DialogHeader>
 
         {activeClients.length === 0 ? (
-          <div className="p-5">
+          <div className="p-5 sm:p-6">
             <EmptyState
               title="No active clients"
               description="Create or reactivate a client before adding a project."
@@ -125,7 +129,7 @@ export function ProjectFormModal({
           </div>
         ) : (
           <form
-            className="space-y-5 px-5 py-5"
+            className="space-y-5 px-5 py-5 sm:px-6"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             {error ? <ErrorState message={error} /> : null}
@@ -135,8 +139,7 @@ export function ProjectFormModal({
                 error={form.formState.errors.client_id?.message}
                 label="Client"
               >
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50"
+                <Select
                   disabled={isSubmitting}
                   {...form.register("client_id")}
                 >
@@ -147,15 +150,14 @@ export function ProjectFormModal({
                         : client.name}
                     </option>
                   ))}
-                </select>
+                </Select>
               </Field>
 
               <Field
                 error={form.formState.errors.status?.message}
                 label="Status"
               >
-                <select
-                  className="flex h-10 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50"
+                <Select
                   disabled={isSubmitting}
                   {...form.register("status")}
                 >
@@ -164,7 +166,7 @@ export function ProjectFormModal({
                       {formatStatus(status)}
                     </option>
                   ))}
-                </select>
+                </Select>
               </Field>
 
               <Field
@@ -227,14 +229,13 @@ export function ProjectFormModal({
               error={form.formState.errors.description?.message}
               label="Description"
             >
-              <textarea
-                className="min-h-28 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50"
+              <Textarea
                 disabled={isSubmitting}
                 {...form.register("description")}
               />
             </Field>
 
-            <div className="flex flex-col-reverse gap-2 border-t border-border pt-5 sm:flex-row sm:justify-end">
+            <DialogFooter>
               <Button
                 disabled={isSubmitting}
                 onClick={onClose}
@@ -252,11 +253,11 @@ export function ProjectFormModal({
                 ) : null}
                 {project ? "Save changes" : "Create project"}
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         )}
-      </section>
-    </div>
+      </DialogContent>
+    </DialogOverlay>
   );
 }
 

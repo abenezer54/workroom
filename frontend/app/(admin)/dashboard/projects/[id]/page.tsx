@@ -237,7 +237,7 @@ export default function ProjectDetailPage() {
       />
 
       {notice ? (
-        <div className="rounded-md border border-[#D7E7DA] bg-[#E7F1E9] px-4 py-3 text-sm text-[#3F6B4F]">
+        <div className="rounded-md border border-success-border bg-success-soft px-4 py-3 text-sm text-success">
           {notice}
         </div>
       ) : null}

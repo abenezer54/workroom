@@ -19,6 +19,14 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   getClientInvoice,
   getClientProjects,
 } from "@/lib/api/client-portal";
@@ -132,34 +140,32 @@ export default function ClientInvoiceDetailPage() {
         </CardHeader>
         <CardContent>
           <div className="overflow-hidden rounded-md border border-border">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-muted text-xs font-medium uppercase text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3">Description</th>
-                  <th className="px-4 py-3">Quantity</th>
-                  <th className="px-4 py-3">Unit Price</th>
-                  <th className="px-4 py-3 text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
+            <Table className="min-w-[620px]">
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead>Description</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Unit Price</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {(invoice.items ?? []).map((item) => (
-                  <tr key={item.id}>
-                    <td className="px-4 py-3 text-foreground">
-                      {item.description}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                  <TableRow key={item.id}>
+                    <TableCell>{item.description}</TableCell>
+                    <TableCell className="text-muted-foreground">
                       {item.quantity}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
                       {formatCurrency(item.unit_price)}
-                    </td>
-                    <td className="px-4 py-3 text-right font-medium text-foreground">
+                    </TableCell>
+                    <TableCell className="text-right font-medium">
                       {formatCurrency(item.amount)}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
 
           <div className="ml-auto mt-5 max-w-sm space-y-3">

@@ -91,8 +91,8 @@ export function AuthForm({ mode }: AuthFormProps) {
 
   if (!isLoading && user) {
     return (
-      <Card>
-        <CardContent className="p-5">
+    <Card>
+      <CardContent className="p-5">
           <p className="text-sm text-muted-foreground">
             Redirecting to your workspace...
           </p>
@@ -102,7 +102,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <Card>
+    <Card className="shadow-[0_12px_40px_rgba(15,23,42,0.08)]">
       <CardContent className="space-y-5 p-5">
         {error ? <ErrorState message={error} /> : null}
         <form
@@ -208,7 +208,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </form>
 
         {isLogin ? (
-          <div className="rounded-md border border-border bg-muted p-3">
+          <div className="rounded-md border border-border bg-muted/70 p-3">
             <p className="text-xs font-medium text-foreground">
               Demo accounts
             </p>
@@ -234,7 +234,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             </div>
           </div>
         ) : (
-          <p className="rounded-md border border-border bg-muted p-3 text-xs leading-5 text-muted-foreground">
+          <p className="rounded-md border border-info-border bg-info-soft p-3 text-xs leading-5 text-info">
             Registration creates an agency admin account. Client users are
             managed from the agency workspace in a later feature phase.
           </p>
