@@ -56,8 +56,8 @@ export function AppShell({ children, variant }: AppShellProps) {
     variant === "admin" ? "Agency workspace" : "Client portal";
 
   return (
-    <div className="min-h-screen bg-background">
-      <aside className="fixed inset-y-0 left-0 hidden w-[248px] border-r border-sidebar-border bg-sidebar px-3 py-4 lg:flex lg:flex-col">
+    <div className="linear-app min-h-screen bg-background">
+      <aside className="linear-sidebar fixed inset-y-0 left-0 hidden w-[248px] border-r border-sidebar-border bg-sidebar px-3 py-4 lg:flex lg:flex-col">
         <div className="px-2 py-1">
           <AppLogo variant="dark" />
         </div>
@@ -77,9 +77,9 @@ export function AppShell({ children, variant }: AppShellProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative flex h-9 items-center gap-2.5 rounded-md px-2.5 text-sm font-medium text-sidebar-muted transition-[background-color,color,box-shadow] hover:bg-white/[0.06] hover:text-sidebar-foreground",
+                  "relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-sm font-medium text-sidebar-muted transition-[background-color,color,box-shadow] hover:bg-surface-2 hover:text-sidebar-foreground",
                   isActive &&
-                    "bg-sidebar-accent text-sidebar-foreground shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)] before:absolute before:left-0 before:top-1/2 before:h-4 before:w-0.5 before:-translate-y-1/2 before:rounded-full before:bg-accent",
+                    "bg-sidebar-accent text-sidebar-foreground shadow-[inset_0_0_0_1px_rgba(130,143,255,0.1)] before:absolute before:left-0 before:top-1/2 before:h-4 before:w-0.5 before:-translate-y-1/2 before:rounded-full before:bg-ring/80",
                 )}
               >
                 <Icon className="h-4 w-4" aria-hidden="true" />
@@ -91,7 +91,7 @@ export function AppShell({ children, variant }: AppShellProps) {
       </aside>
 
       <div className="lg:pl-[248px]">
-        <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
+        <header className="linear-header sticky top-0 z-20 border-b border-sidebar-border bg-header">
           <div className="flex h-14 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
             <div className="lg:hidden">
               <AppLogo />
@@ -133,7 +133,7 @@ export function AppShell({ children, variant }: AppShellProps) {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "shrink-0 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                    "shrink-0 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-surface-2 hover:text-foreground",
                     isActive &&
                       "border-accent-border bg-accent-soft text-foreground",
                   )}

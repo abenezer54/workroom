@@ -56,7 +56,7 @@ export default function HomePage() {
                   value="$18k"
                 />
               </div>
-              <div className="rounded-md border border-border bg-card p-4">
+              <div className="linear-panel rounded-md border border-border bg-card p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-foreground">
@@ -70,7 +70,7 @@ export default function HomePage() {
                 </div>
                 <ProgressBar className="mt-4" value={72} />
               </div>
-              <div className="rounded-md border border-border bg-muted/60 p-4">
+              <div className="linear-panel rounded-md border border-border bg-muted/60 p-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                   <CheckCircle2 className="h-4 w-4 text-accent" aria-hidden="true" />
                   Recent update
@@ -97,7 +97,7 @@ function PreviewMetric({
   value: string;
 }) {
   return (
-    <div className="rounded-md border border-border bg-muted/50 p-4">
+    <div className="linear-panel rounded-md border border-border bg-muted/50 p-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs font-medium text-muted-foreground">{label}</p>
         <Icon className="h-4 w-4 text-accent" aria-hidden="true" />

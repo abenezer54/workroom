@@ -102,7 +102,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <Card className="shadow-[0_12px_40px_rgba(15,23,42,0.08)]">
+    <Card className="shadow-[0_12px_40px_rgba(0,0,0,0.46)]">
       <CardContent className="space-y-5 p-5">
         {error ? <ErrorState message={error} /> : null}
         <form
@@ -208,7 +208,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </form>
 
         {isLogin ? (
-          <div className="rounded-md border border-border bg-muted/70 p-3">
+          <div className="linear-panel rounded-md border border-border bg-muted/70 p-3">
             <p className="text-xs font-medium text-foreground">
               Demo accounts
             </p>

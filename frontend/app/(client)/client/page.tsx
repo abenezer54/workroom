@@ -149,7 +149,7 @@ export default function ClientPage() {
               <div className="space-y-4">
                 {dashboard.recent_updates.map((update) => (
                   <article
-                    className="rounded-md border border-border px-4 py-3"
+                    className="linear-panel rounded-md border border-border bg-surface-1 px-4 py-3"
                     key={update.id}
                   >
                     <p className="text-xs font-medium text-muted-foreground">

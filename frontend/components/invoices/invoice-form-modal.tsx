@@ -156,7 +156,7 @@ export function InvoiceFormModal({
 
         {isLoading ? (
           <div className="p-5 sm:p-6">
-            <div className="rounded-md border border-border px-4 py-3 text-sm text-muted-foreground">
+            <div className="linear-panel rounded-md border border-border px-4 py-3 text-sm text-muted-foreground">
               Loading invoice details...
             </div>
           </div>

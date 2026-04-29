@@ -10,8 +10,8 @@ type AuthLayoutProps = {
 
 export function AuthLayout({ title, description, children }: AuthLayoutProps) {
   return (
-    <main className="flex min-h-screen bg-background">
-      <section className="hidden flex-1 border-r border-sidebar-border bg-sidebar px-10 py-8 lg:flex lg:flex-col">
+    <main className="linear-app flex min-h-screen bg-background">
+      <section className="linear-sidebar hidden flex-1 border-r border-sidebar-border bg-sidebar px-10 py-8 lg:flex lg:flex-col">
         <AppLogo variant="dark" />
         <div className="mt-auto max-w-md space-y-4 pb-8">
           <p className="text-sm font-medium text-sidebar-muted">
@@ -25,8 +25,8 @@ export function AuthLayout({ title, description, children }: AuthLayoutProps) {
             focused portal.
           </p>
           <div className="grid gap-2 pt-4">
-            <div className="h-2 w-36 rounded-full bg-white/[0.12]" />
-            <div className="h-2 w-52 rounded-full bg-white/10" />
+            <div className="h-2 w-36 rounded-full bg-surface-4" />
+            <div className="h-2 w-52 rounded-full bg-surface-3" />
             <div className="h-2 w-28 rounded-full bg-accent/80" />
           </div>
         </div>

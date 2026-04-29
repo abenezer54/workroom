@@ -48,7 +48,7 @@ export function DataTable<TData, TValue>({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-lg border border-border bg-card shadow-[0_1px_2px_rgba(15,23,42,0.04)]",
+        "linear-panel overflow-hidden rounded-lg border border-border bg-card",
         className,
       )}
     >

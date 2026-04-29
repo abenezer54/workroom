@@ -21,7 +21,7 @@ export function StatsCard({ label, value, helper, icon: Icon }: StatsCardProps) 
           ) : null}
         </div>
         {Icon ? (
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-accent-border bg-accent-soft text-accent">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-accent-border bg-accent-soft text-info">
             <Icon className="h-5 w-5" aria-hidden="true" />
           </span>
         ) : null}

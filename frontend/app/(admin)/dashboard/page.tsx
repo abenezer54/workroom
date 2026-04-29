@@ -333,7 +333,7 @@ function InvoiceAmount({
   helper: string;
 }) {
   return (
-    <div className="rounded-md border border-border bg-card px-4 py-3">
+    <div className="linear-panel rounded-md border border-border bg-card px-4 py-3">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm font-medium text-foreground">{label}</p>

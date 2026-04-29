@@ -84,7 +84,7 @@ function ReadOnlyField({
   value: React.ReactNode;
 }) {
   return (
-    <div className="rounded-md border border-border px-4 py-3">
+    <div className="linear-panel rounded-md border border-border bg-surface-1 px-4 py-3">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
       <div className="mt-1 break-all text-sm font-medium text-foreground">
         {value}

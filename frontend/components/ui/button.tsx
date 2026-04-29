@@ -5,19 +5,19 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-[background-color,border-color,color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/25 disabled:pointer-events-none disabled:opacity-55 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3.5 py-2 text-sm font-medium transition-[background-color,border-color,color,box-shadow,filter] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "border border-primary bg-primary text-primary-foreground shadow-[0_1px_1px_rgba(15,23,42,0.08)] hover:bg-primary-hover",
+          "linear-button linear-button-primary border border-accent-border bg-primary text-primary-foreground hover:bg-primary-hover",
         secondary:
-          "border border-border bg-card text-foreground shadow-[0_1px_1px_rgba(15,23,42,0.04)] hover:border-input hover:bg-muted",
+          "linear-button linear-button-secondary border border-border bg-secondary text-secondary-foreground hover:border-input hover:bg-surface-3 hover:text-foreground",
         accent:
-          "border border-accent bg-accent text-accent-foreground shadow-[0_1px_1px_rgba(15,23,42,0.08)] hover:bg-accent-hover",
+          "linear-button linear-button-primary border border-accent-border bg-accent text-accent-foreground hover:bg-accent-hover",
         destructive:
-          "border border-destructive bg-destructive text-destructive-foreground shadow-[0_1px_1px_rgba(15,23,42,0.08)] hover:bg-destructive-hover",
-        ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
+          "linear-button linear-button-danger border border-danger-border bg-danger-soft text-danger hover:border-destructive hover:bg-destructive hover:text-destructive-foreground",
+        ghost: "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
       },
       size: {
         default: "h-9 px-3.5",

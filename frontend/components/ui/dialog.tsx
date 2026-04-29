@@ -9,7 +9,7 @@ export function DialogOverlay({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-foreground/45 px-3 py-4 backdrop-blur-[2px] sm:items-center sm:px-6 sm:py-8",
+        "fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-overlay px-3 py-4 sm:items-center sm:px-6 sm:py-8",
         className,
       )}
       {...props}
@@ -25,7 +25,7 @@ export function DialogContent({
     <section
       aria-modal="true"
       className={cn(
-        "max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-lg border border-border bg-card text-card-foreground shadow-[0_20px_70px_rgba(15,23,42,0.22)] sm:max-h-[calc(100vh-4rem)]",
+        "linear-panel-strong max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-lg border border-input bg-card text-card-foreground sm:max-h-[calc(100vh-4rem)]",
         className,
       )}
       role="dialog"
