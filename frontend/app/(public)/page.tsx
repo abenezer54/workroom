@@ -139,6 +139,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <WorkspacesSection />
       <FeatureGrid />
       <WorkflowSection />
       <ClientPortalSection />
@@ -346,6 +347,56 @@ function ProductPreview() {
         </div>
       </div>
     </div>
+  );
+}
+
+function WorkspacesSection() {
+  return (
+    <section className="border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
+      <div className="mx-auto max-w-[1320px]">
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-end">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              Two workspaces
+            </p>
+            <h2 className="mt-5 max-w-2xl text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
+              Internal control. Client clarity.
+            </h2>
+          </div>
+          <p className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7 lg:justify-self-end">
+            Workroom separates what your team manages from what each client can
+            safely review, without splitting the work across tools.
+          </p>
+        </div>
+
+        <div className="mt-12 grid gap-4 lg:grid-cols-2">
+          <WorkspacePanel
+            icon={BriefcaseBusiness}
+            label="Agency workspace"
+            title="Run the work behind the scenes."
+            description="Your team manages the operational side of every client relationship."
+            items={[
+              "Organize client records and active projects.",
+              "Track tasks, milestones, updates, and invoices.",
+              "Keep admin controls inside the agency workspace.",
+            ]}
+            badge="Admin view"
+          />
+          <WorkspacePanel
+            icon={PanelRight}
+            label="Client portal"
+            title="Share only what clients need."
+            description="Clients get a focused view of their own work, progress, and billing status."
+            items={[
+              "Show assigned projects and visible tasks.",
+              "Publish progress updates in one place.",
+              "Keep each client scoped to their own records.",
+            ]}
+            badge="Client-scoped"
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -689,6 +740,57 @@ function FeatureCell({
       <p className="mt-4 text-sm leading-6 text-muted-foreground">
         {description}
       </p>
+    </div>
+  );
+}
+
+function WorkspacePanel({
+  icon: Icon,
+  label,
+  title,
+  description,
+  items,
+  badge,
+}: {
+  icon: LucideIcon;
+  label: string;
+  title: string;
+  description: string;
+  items: string[];
+  badge: string;
+}) {
+  return (
+    <div className="rounded-lg border border-white/[0.075] bg-white/[0.025]">
+      <div className="flex items-start justify-between gap-4 border-b border-white/[0.075] p-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/[0.075] bg-black/15 text-muted-foreground">
+              <Icon className="h-4 w-4" aria-hidden="true" />
+            </span>
+            <p className="text-sm font-medium text-muted-foreground">{label}</p>
+          </div>
+          <h3 className="mt-6 text-2xl font-semibold leading-tight text-foreground">
+            {title}
+          </h3>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
+            {description}
+          </p>
+        </div>
+        <Badge variant="neutral" className="shrink-0">
+          {badge}
+        </Badge>
+      </div>
+      <div>
+        {items.map((item) => (
+          <div
+            key={item}
+            className="flex items-center gap-3 border-b border-white/[0.06] px-6 py-4 text-sm text-muted-foreground last:border-b-0"
+          >
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+            <span>{item}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
