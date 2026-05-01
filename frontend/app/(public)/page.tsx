@@ -1,63 +1,18 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  BadgeDollarSign,
   BriefcaseBusiness,
   CheckCircle2,
-  FolderKanban,
-  MessageSquareText,
-  Milestone,
   PanelRight,
-  UsersRound,
   type LucideIcon,
 } from "lucide-react";
 
 import { MarketingLayout } from "@/components/layout/marketing-layout";
+import { ProductModules } from "@/components/marketing/product-modules";
 import { ProductPreview } from "@/components/marketing/product-preview";
 import { ScrollReveal } from "@/components/shared/scroll-reveal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const features: Array<{
-  title: string;
-  description: string;
-  icon: LucideIcon;
-}> = [
-  {
-    title: "Client Management",
-    description:
-      "Keep client records and active work organized under the right agency.",
-    icon: UsersRound,
-  },
-  {
-    title: "Project Tracking",
-    description:
-      "Track status, deadlines, and progress without losing client context.",
-    icon: FolderKanban,
-  },
-  {
-    title: "Tasks & Milestones",
-    description:
-      "Turn project work into clear tasks, milestones, and next steps.",
-    icon: Milestone,
-  },
-  {
-    title: "Project Updates",
-    description: "Share concise progress notes from the same workspace.",
-    icon: MessageSquareText,
-  },
-  {
-    title: "Invoice Management",
-    description: "Create invoice records with clear status visibility.",
-    icon: BadgeDollarSign,
-  },
-  {
-    title: "Client Portal",
-    description:
-      "Give each client a scoped view of their own work and invoices.",
-    icon: PanelRight,
-  },
-];
 
 const workflow = [
   {
@@ -117,7 +72,7 @@ export default function HomePage() {
       </section>
 
       <WorkspacesSection />
-      <FeatureGrid />
+      <ProductModules />
       <WorkflowSection />
       <ClientPortalSection />
       <FinalCta />
@@ -169,33 +124,6 @@ function WorkspacesSection() {
             ]}
             badge="Client-scoped"
           />
-        </div>
-      </ScrollReveal>
-    </section>
-  );
-}
-
-function FeatureGrid() {
-  return (
-    <section
-      id="features"
-      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24"
-    >
-      <ScrollReveal className="mx-auto max-w-[1320px]">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
-          <h2 className="max-w-2xl text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
-            Everything client work needs to stay clear.
-          </h2>
-          <p className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7 lg:justify-self-end">
-            Workroom keeps the essentials together: clients, projects, tasks,
-            updates, invoices, and portal access with clear ownership.
-          </p>
-        </div>
-
-        <div className="mt-12 grid border-l border-t border-white/[0.075] sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature, index) => (
-            <FeatureCell key={feature.title} index={index + 1} {...feature} />
-          ))}
         </div>
       </ScrollReveal>
     </section>
@@ -337,35 +265,6 @@ function FinalCta() {
         </div>
       </ScrollReveal>
     </section>
-  );
-}
-
-function FeatureCell({
-  index,
-  title,
-  description,
-  icon: Icon,
-}: {
-  index: number;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-}) {
-  return (
-    <div className="min-h-64 border-b border-r border-white/[0.075] p-6 sm:p-7">
-      <div className="flex items-start justify-between gap-4">
-        <span className="font-mono text-xs text-muted-foreground">
-          {String(index).padStart(2, "0")}
-        </span>
-        <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/[0.075] bg-white/[0.025] text-muted-foreground">
-          <Icon className="h-4 w-4" aria-hidden="true" />
-        </span>
-      </div>
-      <h3 className="mt-12 text-xl font-semibold text-foreground">{title}</h3>
-      <p className="mt-4 text-sm leading-6 text-muted-foreground">
-        {description}
-      </p>
-    </div>
   );
 }
 

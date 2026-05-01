@@ -115,35 +115,22 @@ export function ProductPreview() {
       className="relative mx-auto mt-12 max-w-[1320px] scroll-mt-28 sm:mt-14"
     >
       <div className="relative overflow-hidden rounded-[18px] border border-white/[0.11] bg-[#0b0c0d] shadow-[0_22px_34px_rgba(0,0,0,0.34),0_48px_120px_rgba(0,0,0,0.42)]">
-        <div className="grid min-h-12 grid-cols-[1fr_auto] items-center gap-3 border-b border-white/[0.075] bg-white/[0.018] px-4 md:grid-cols-[1fr_auto_1fr]">
+        <div className="grid min-h-12 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-white/[0.075] bg-white/[0.018] px-4">
           <div className="flex items-center gap-2 justify-self-start">
             <span className="h-2.5 w-2.5 rounded-full bg-white/18" />
             <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
             <span className="h-2.5 w-2.5 rounded-full bg-white/10" />
           </div>
 
-          <PreviewTabList
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            className="hidden md:flex"
-          />
+          <p className="hidden text-xs font-medium text-muted-foreground sm:block">
+            {activePreviewTab.path}
+          </p>
 
           <div className="flex items-center gap-3 justify-self-end">
-            <p className="hidden text-xs font-medium text-muted-foreground xl:block">
-              {activePreviewTab.path}
-            </p>
             <Badge variant={activePreviewTab.badgeVariant}>
               {activePreviewTab.badge}
             </Badge>
           </div>
-        </div>
-
-        <div className="border-b border-white/[0.075] p-3 md:hidden">
-          <PreviewTabList
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            compact
-          />
         </div>
 
         <div className="hidden min-h-[650px] grid-cols-[244px_minmax(0,1fr)_342px] lg:grid">
@@ -152,7 +139,7 @@ export function ProductPreview() {
           <main className="min-w-0 border-r border-white/[0.075]">
             <div
               key={activeTab}
-              aria-labelledby={`preview-tab-${activeTab}`}
+              aria-label={`${activePreviewTab.label} preview`}
               className="h-full"
               id={`preview-panel-${activeTab}`}
               role="tabpanel"
@@ -173,75 +160,6 @@ export function ProductPreview() {
         <MobilePreview activeTab={activeTab} />
       </div>
     </div>
-  );
-}
-
-function PreviewTabList({
-  activeTab,
-  onTabChange,
-  className,
-  compact = false,
-}: {
-  activeTab: PreviewTabId;
-  onTabChange: (tab: PreviewTabId) => void;
-  className?: string;
-  compact?: boolean;
-}) {
-  return (
-    <div
-      aria-label="Product preview screens"
-      className={cn(
-        "rounded-lg border border-white/[0.075] bg-black/20 p-1",
-        compact ? "grid grid-cols-3 gap-1" : "items-center gap-1",
-        className,
-      )}
-      role="tablist"
-    >
-      {previewTabs.map((tab) => (
-        <PreviewTabButton
-          key={tab.id}
-          active={activeTab === tab.id}
-          compact={compact}
-          tab={tab}
-          onClick={() => onTabChange(tab.id)}
-        />
-      ))}
-    </div>
-  );
-}
-
-function PreviewTabButton({
-  active,
-  compact,
-  tab,
-  onClick,
-}: {
-  active: boolean;
-  compact: boolean;
-  tab: PreviewTab;
-  onClick: () => void;
-}) {
-  const Icon = tab.icon;
-
-  return (
-    <button
-      aria-controls={`preview-panel-${tab.id}`}
-      aria-selected={active}
-      className={cn(
-        "inline-flex h-8 items-center justify-center gap-2 rounded-md px-3 text-xs font-medium transition-[background-color,border-color,color] duration-200",
-        compact && "w-full px-2",
-        active
-          ? "border border-accent-border bg-accent-soft text-foreground"
-          : "border border-transparent text-muted-foreground hover:bg-white/[0.035] hover:text-foreground",
-      )}
-      id={`preview-tab-${tab.id}`}
-      role="tab"
-      type="button"
-      onClick={onClick}
-    >
-      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-      <span className={cn(compact && "truncate")}>{tab.label}</span>
-    </button>
   );
 }
 
