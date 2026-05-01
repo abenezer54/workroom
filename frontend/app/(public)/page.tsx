@@ -30,37 +30,37 @@ const features: Array<{
   {
     title: "Client Management",
     description:
-      "Keep client records, contact details, and active work connected to the agency that owns them.",
+      "Keep client records and active work organized under the right agency.",
     icon: UsersRound,
   },
   {
     title: "Project Tracking",
     description:
-      "Track status, deadlines, and progress across every engagement without losing the client context.",
+      "Track status, deadlines, and progress without losing client context.",
     icon: FolderKanban,
   },
   {
     title: "Tasks & Milestones",
     description:
-      "Break project work into clear tasks and milestones so delivery always has a visible next step.",
+      "Turn project work into clear tasks, milestones, and next steps.",
     icon: Milestone,
   },
   {
     title: "Project Updates",
     description:
-      "Publish concise progress notes that keep clients informed from the same workspace.",
+      "Share concise progress notes from the same workspace.",
     icon: MessageSquareText,
   },
   {
     title: "Invoice Management",
     description:
-      "Create and review invoice records with simple status visibility for both the agency and client.",
+      "Create invoice records with clear status visibility.",
     icon: BadgeDollarSign,
   },
   {
     title: "Client Portal",
     description:
-      "Give each client a polished, scoped view of only their own projects, tasks, updates, and invoices.",
+      "Give each client a scoped view of their own work and invoices.",
     icon: PanelRight,
   },
 ];
@@ -103,59 +103,36 @@ const workflow = [
     step: "01",
     title: "Set up the client workspace",
     description:
-      "Create client records and organize the projects, invoices, and updates that belong to each account.",
+      "Create the client record and connect the work that belongs to it.",
   },
   {
     step: "02",
     title: "Run the work from one surface",
     description:
-      "Move projects forward with tasks, milestones, status changes, and dashboard visibility.",
+      "Move projects forward with tasks, milestones, and status visibility.",
   },
   {
     step: "03",
     title: "Share a calm client view",
     description:
-      "Clients sign in to see their own project progress, recent updates, and invoice status.",
+      "Clients sign in to see project progress, updates, and invoice status.",
   },
 ];
 
 export default function HomePage() {
   return (
     <MarketingLayout>
-      <section className="relative overflow-hidden border-b border-white/[0.055] px-5 pb-24 pt-16 sm:px-8 sm:pt-20 lg:px-10 lg:pb-32 lg:pt-28">
-        <div className="mx-auto max-w-[1500px]">
-          <div className="mx-auto max-w-[1180px] text-center">
-            <p className="mb-7 text-sm font-medium text-muted-foreground">
-              Workroom for agencies, consultants, and service businesses
-            </p>
-            <h1 className="text-balance text-5xl font-medium leading-[0.98] text-foreground sm:text-7xl lg:text-8xl xl:text-[7.5rem]">
-              Client work, organized in one calm workspace.
+      <section className="relative overflow-hidden border-b border-white/[0.055] px-5 pb-20 pt-16 sm:px-8 sm:pt-20 lg:px-10 lg:pb-24 lg:pt-28">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="max-w-[720px] text-left">
+            <h1 className="text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
+              <span className="block">The client workspace</span>
+              <span className="block">for agencies and consultants.</span>
             </h1>
-            <p className="mx-auto mt-8 max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-              Workroom gives agencies and consultants one place to manage
-              clients, projects, tasks, updates, and invoices - with a polished
-              portal your clients can actually enjoy using.
+            <p className="mt-5 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+              Plan projects, share updates, track invoices, and give every
+              client a clear portal.
             </p>
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Button
-                asChild
-                size="lg"
-                className="h-11 rounded-full border-white/80 bg-[#f7f8f8] px-5 text-background hover:bg-text-secondary"
-              >
-                <Link href="/login">
-                  View Demo
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="secondary"
-                size="lg"
-                className="h-11 rounded-full border-white/[0.09] bg-white/[0.03] px-5 text-foreground hover:bg-white/[0.065]"
-              >
-                <Link href="/login">Sign In</Link>
-              </Button>
-            </div>
           </div>
 
           <ProductPreview />
@@ -174,7 +151,7 @@ function ProductPreview() {
   return (
     <div
       id="product"
-      className="relative mx-auto mt-20 max-w-[1420px] scroll-mt-28"
+      className="relative mx-auto mt-12 max-w-[1320px] scroll-mt-28 sm:mt-14"
     >
       <div className="relative overflow-hidden rounded-lg border border-white/[0.11] bg-[#0b0c0d] shadow-[0_30px_120px_rgba(0,0,0,0.46)]">
         <div className="flex h-12 items-center justify-between border-b border-white/[0.075] bg-white/[0.018] px-4">
@@ -376,21 +353,20 @@ function FeatureGrid() {
   return (
     <section
       id="features"
-      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-24 sm:px-8 lg:px-10 lg:py-32"
+      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24"
     >
       <div className="mx-auto max-w-[1320px]">
         <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
-          <h2 className="max-w-3xl text-4xl font-medium leading-[1.04] text-foreground sm:text-6xl lg:text-7xl">
-            Built for the full client-work loop.
+          <h2 className="max-w-2xl text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
+            Everything client work needs to stay clear.
           </h2>
-          <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8 lg:justify-self-end">
-            Workroom keeps the MVP focused: client records, project tracking,
-            tasks, updates, invoices, and a client portal that respects ownership
-            boundaries.
+          <p className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7 lg:justify-self-end">
+            Workroom keeps the essentials together: clients, projects, tasks,
+            updates, invoices, and portal access with clear ownership.
           </p>
         </div>
 
-        <div className="mt-16 grid border-l border-t border-white/[0.075] sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-12 grid border-l border-t border-white/[0.075] sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
             <FeatureCell key={feature.title} index={index + 1} {...feature} />
           ))}
@@ -404,13 +380,13 @@ function WorkflowSection() {
   return (
     <section
       id="workflow"
-      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-24 sm:px-8 lg:px-10 lg:py-32"
+      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24"
     >
       <div className="mx-auto grid max-w-[1320px] gap-14 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
           <p className="text-sm font-medium text-muted-foreground">Workflow</p>
-          <h2 className="mt-5 text-4xl font-medium leading-[1.04] text-foreground sm:text-6xl">
-            From agency setup to client visibility.
+          <h2 className="mt-5 text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
+            From internal work to client visibility.
           </h2>
         </div>
         <div className="space-y-4">
@@ -442,20 +418,19 @@ function ClientPortalSection() {
   return (
     <section
       id="portal"
-      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-24 sm:px-8 lg:px-10 lg:py-32"
+      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24"
     >
       <div className="mx-auto grid max-w-[1320px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <p className="text-sm font-medium text-muted-foreground">
             Client portal
           </p>
-          <h2 className="mt-5 text-4xl font-medium leading-[1.04] text-foreground sm:text-6xl">
-            A polished client view, without exposing agency-only data.
+          <h2 className="mt-5 text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
+            A polished client view with the right boundaries.
           </h2>
-          <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-            Clients can review assigned projects, visible tasks, project
-            updates, and their own invoices. Agency controls stay with the admin
-            workspace.
+          <p className="mt-5 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+            Clients can review assigned projects, visible tasks, updates, and
+            their own invoices while admin controls stay private.
           </p>
         </div>
 
@@ -505,14 +480,14 @@ function ClientPortalSection() {
 
 function FinalCta() {
   return (
-    <section className="px-5 py-24 text-center sm:px-8 lg:px-10 lg:py-32">
-      <div className="mx-auto max-w-4xl">
-        <h2 className="text-4xl font-medium leading-[1.04] text-foreground sm:text-6xl lg:text-7xl">
-          Bring every client workspace into focus.
+    <section className="px-5 py-20 text-center sm:px-8 lg:px-10 lg:py-24">
+      <div className="mx-auto max-w-3xl">
+        <h2 className="text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
+          Bring client work into focus.
         </h2>
-        <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-          Walk through the Workroom demo and see how clients, projects, tasks,
-          updates, and invoices fit together.
+        <p className="mx-auto mt-5 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+          See how clients, projects, tasks, updates, and invoices fit together
+          in one calm workspace.
         </p>
         <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button
