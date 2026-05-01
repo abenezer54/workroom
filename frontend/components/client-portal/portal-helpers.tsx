@@ -24,7 +24,7 @@ export function PortalSectionError({
 
 export function DetailItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-t border-border py-3">
+    <div className="border-t border-white/[0.065] py-3">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
       <p className="mt-1 text-sm font-medium text-foreground">{value}</p>
     </div>

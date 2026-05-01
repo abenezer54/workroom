@@ -20,15 +20,15 @@ export function StatsCard({
   return (
     <div
       className={cn(
-        "flex items-start justify-between gap-4 p-5 transition-colors hover:bg-surface-2/35",
+        "flex min-h-36 items-start justify-between gap-4 p-5 transition-colors hover:bg-white/[0.025]",
         className,
       )}
     >
       <div className="min-w-0 space-y-1.5">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <p className="text-xs font-medium uppercase text-muted-foreground">
           {label}
         </p>
-        <p className="text-2xl font-semibold tabular-nums text-foreground">
+        <p className="text-3xl font-semibold tabular-nums text-foreground">
           {value}
         </p>
         {helper ? (
@@ -36,7 +36,7 @@ export function StatsCard({
         ) : null}
       </div>
       {Icon ? (
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-accent-border bg-accent-soft text-accent">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-accent-border bg-accent-soft text-accent">
           <Icon className="h-4 w-4" aria-hidden="true" />
         </span>
       ) : null}

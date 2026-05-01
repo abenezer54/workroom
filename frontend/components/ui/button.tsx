@@ -12,12 +12,12 @@ const buttonVariants = cva(
         default:
           "wr-button wr-button-primary border border-accent-border bg-primary text-primary-foreground hover:bg-primary-hover",
         secondary:
-          "wr-button wr-button-secondary border border-border bg-secondary text-secondary-foreground hover:border-input hover:bg-surface-3 hover:text-foreground",
+          "wr-button wr-button-secondary border border-white/[0.075] bg-white/[0.025] text-secondary-foreground hover:border-input hover:bg-white/[0.06] hover:text-foreground",
         accent:
           "wr-button wr-button-primary border border-accent-border bg-accent text-accent-foreground hover:bg-accent-hover",
         destructive:
           "wr-button wr-button-danger border border-danger-border bg-danger-soft text-danger hover:border-destructive hover:bg-destructive hover:text-destructive-foreground",
-        ghost: "text-muted-foreground hover:bg-surface-2 hover:text-foreground",
+        ghost: "text-muted-foreground hover:bg-white/[0.04] hover:text-foreground",
       },
       size: {
         default: "h-9 px-3.5",

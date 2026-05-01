@@ -157,7 +157,7 @@ export function InvoiceFormModal({
 
         {isLoading ? (
           <div className="p-5 sm:p-6">
-            <div className="wr-panel rounded-md border border-border px-4 py-3 text-sm text-muted-foreground">
+            <div className="wr-panel rounded-md border border-white/[0.075] bg-white/[0.025] px-4 py-3 text-sm text-muted-foreground">
               Loading invoice details...
             </div>
           </div>
@@ -295,7 +295,7 @@ export function InvoiceFormModal({
               <div className="space-y-3">
                 {fields.map((field, index) => (
                   <div
-                    className="grid gap-3 rounded-md border border-border bg-muted/30 p-3 lg:grid-cols-[minmax(220px,1fr)_120px_140px_auto]"
+                    className="grid gap-3 rounded-md border border-white/[0.075] bg-white/[0.025] p-3 lg:grid-cols-[minmax(220px,1fr)_120px_140px_auto]"
                     key={field.id}
                   >
                     <Field
@@ -360,7 +360,7 @@ export function InvoiceFormModal({
               </div>
             </div>
 
-            <div className="grid gap-3 rounded-md border border-border bg-muted/70 p-4 sm:grid-cols-3">
+            <div className="grid gap-3 rounded-md border border-white/[0.075] bg-white/[0.025] p-4 sm:grid-cols-3">
               <TotalPreview label="Subtotal" value={subtotal} />
               <TotalPreview
                 label="Tax less discount"

@@ -12,8 +12,10 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
   if (auth.isLoading || !auth.user || auth.user.role !== ADMIN_ROLE) {
     return (
-      <div className="min-h-screen bg-background p-6">
-        <LoadingState label="Checking workspace access" />
+      <div className="wr-app flex min-h-screen items-center justify-center bg-background p-6">
+        <div className="w-full max-w-sm">
+          <LoadingState label="Checking workspace access" />
+        </div>
       </div>
     );
   }

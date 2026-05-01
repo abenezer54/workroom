@@ -17,7 +17,7 @@ export function ProgressBar({ value, label, className }: ProgressBarProps) {
           <span className="font-medium text-foreground">{normalizedValue}%</span>
         </div>
       ) : null}
-      <div className="h-1.5 overflow-hidden rounded-full bg-surface-3">
+      <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.08]">
         <div
           className="h-full rounded-full bg-accent transition-[width]"
           style={{ width: `${normalizedValue}%` }}

@@ -24,7 +24,7 @@ export function AppLogo({
         className={cn(
           "flex h-9 w-9 items-center justify-center rounded-md border text-sm font-semibold shadow-[0_1px_1px_rgba(0,0,0,0.32)]",
           isDark
-            ? "border-sidebar-border bg-surface-2 text-sidebar-foreground"
+            ? "border-white/[0.09] bg-white/[0.055] text-sidebar-foreground"
             : "border-primary bg-primary text-primary-foreground",
         )}
       >

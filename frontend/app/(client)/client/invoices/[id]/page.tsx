@@ -200,7 +200,7 @@ export default function ClientInvoiceDetailPage() {
               label="Discount"
               value={formatCurrency(invoice.discount)}
             />
-            <div className="flex items-center justify-between border-t border-border pt-3 text-base font-semibold text-foreground">
+            <div className="flex items-center justify-between border-t border-white/[0.065] pt-3 text-base font-semibold text-foreground">
               <span>Total</span>
               <span>{formatCurrency(invoice.total)}</span>
             </div>

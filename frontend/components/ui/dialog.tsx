@@ -9,7 +9,7 @@ export function DialogOverlay({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-overlay px-3 py-4 sm:items-center sm:px-6 sm:py-8",
+        "fixed inset-0 z-50 flex items-end justify-center overflow-y-auto bg-black/82 px-3 py-4 backdrop-blur-sm sm:items-center sm:px-6 sm:py-8",
         className,
       )}
       {...props}
@@ -25,7 +25,7 @@ export function DialogContent({
     <section
       aria-modal="true"
       className={cn(
-        "wr-panel-strong max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-lg border border-input bg-card text-card-foreground sm:max-h-[calc(100vh-4rem)]",
+        "wr-panel-strong max-h-[calc(100vh-2rem)] w-full overflow-y-auto rounded-lg border border-white/[0.1] bg-[#0b0c0d] text-card-foreground sm:max-h-[calc(100vh-4rem)]",
         className,
       )}
       role="dialog"
@@ -41,7 +41,7 @@ export function DialogHeader({
   return (
     <div
       className={cn(
-        "flex items-start justify-between gap-4 border-b border-border px-5 py-4 sm:px-6",
+        "flex items-start justify-between gap-4 border-b border-white/[0.07] bg-white/[0.018] px-5 py-4 sm:px-6",
         className,
       )}
       {...props}
@@ -87,7 +87,7 @@ export function DialogFooter({
   return (
     <div
       className={cn(
-        "flex flex-col-reverse gap-2 border-t border-border pt-5 sm:flex-row sm:justify-end",
+        "flex flex-col-reverse gap-2 border-t border-white/[0.07] pt-5 sm:flex-row sm:justify-end",
         className,
       )}
       {...props}

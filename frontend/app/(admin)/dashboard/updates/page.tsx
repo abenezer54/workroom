@@ -32,7 +32,7 @@ export default function UpdatesPage() {
         title="Updates"
       />
 
-      <div className="rounded-md border border-info-border bg-info-soft px-4 py-3 text-sm text-info">
+      <div className="rounded-lg border border-info-border bg-info-soft/80 px-4 py-3 text-sm text-info">
         Updates are posted from each project detail page.
       </div>
 

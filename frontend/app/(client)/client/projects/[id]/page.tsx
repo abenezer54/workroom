@@ -43,6 +43,7 @@ import {
   getClientProjectTasks,
   getClientProjectUpdates,
 } from "@/lib/api/client-portal";
+import { usePageTitle } from "@/lib/page-title-context";
 
 export default function ClientProjectDetailPage() {
   const params = useParams<{ id: string }>();

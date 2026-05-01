@@ -12,10 +12,7 @@ import {
 } from "lucide-react";
 
 import { ErrorState } from "@/components/shared/error-state";
-import {
-  DashboardSkeleton,
-  LoadingState,
-} from "@/components/shared/loading-state";
+import { DashboardSkeleton } from "@/components/shared/loading-state";
 import { PageHeader } from "@/components/shared/page-header";
 import { ProgressBar } from "@/components/shared/progress-bar";
 import { StatsCard } from "@/components/shared/stats-card";
@@ -108,23 +105,23 @@ function SummaryCards({ dashboard }: { dashboard: AdminDashboard }) {
   const summary = dashboard.summary_cards;
 
   return (
-    <div className="wr-panel grid overflow-hidden rounded-lg border border-border bg-card/45 md:grid-cols-2 xl:grid-cols-4">
+    <div className="wr-panel grid overflow-hidden rounded-lg border border-white/[0.075] bg-[#0b0c0d] md:grid-cols-2 xl:grid-cols-4">
       <StatsCard
-        className="border-b border-border md:border-r xl:border-b-0"
+        className="border-b border-white/[0.065] md:border-r xl:border-b-0"
         label="Total Clients"
         value={summary.total_clients}
         helper="Active client records"
         icon={Users}
       />
       <StatsCard
-        className="border-b border-border xl:border-b-0 xl:border-r"
+        className="border-b border-white/[0.065] xl:border-b-0 xl:border-r"
         label="Active Projects"
         value={summary.active_projects}
         helper="Currently in progress"
         icon={FolderKanban}
       />
       <StatsCard
-        className="border-b border-border md:border-b-0 md:border-r"
+        className="border-b border-white/[0.065] md:border-b-0 md:border-r"
         label="Pending Invoices"
         value={summary.pending_invoices}
         helper="Sent or overdue"
@@ -300,7 +297,7 @@ function InvoiceOverview({ dashboard }: { dashboard: AdminDashboard }) {
         <WorkspaceSectionTitle>Invoice Overview</WorkspaceSectionTitle>
       </WorkspaceSectionHeader>
       <WorkspaceSectionContent className="space-y-5">
-        <div className="divide-y divide-border border-y border-border">
+        <div className="divide-y divide-white/[0.065] border-y border-white/[0.065]">
           <InvoiceAmount
             label="Outstanding"
             value={invoice.total_outstanding}
@@ -322,7 +319,7 @@ function InvoiceOverview({ dashboard }: { dashboard: AdminDashboard }) {
           {counts.map((item) => (
             <div
               key={item.label}
-              className="flex items-center justify-between gap-3 rounded-md border border-border bg-muted/45 px-3 py-2"
+              className="flex items-center justify-between gap-3 rounded-md border border-white/[0.075] bg-white/[0.025] px-3 py-2"
             >
               <StatusBadge status={item.status} />
               <span className="text-sm font-semibold text-foreground">
@@ -370,8 +367,8 @@ function SectionEmpty({
   description: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-border bg-muted/60 px-6 py-10 text-center">
-      <span className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card text-muted-foreground">
+    <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-white/[0.075] bg-white/[0.018] px-6 py-10 text-center">
+      <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/[0.075] bg-white/[0.025] text-muted-foreground">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </span>
       <h2 className="mt-3 text-sm font-semibold text-foreground">{title}</h2>

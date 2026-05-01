@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { AppLogo } from "@/components/shared/app-logo";
@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 type NavItem = {
   label: string;
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string }>;
 };
 
 const adminNavItems: NavItem[] = [
@@ -53,9 +53,14 @@ function buildBreadcrumbs(
   pageTitle: string | null,
 ): { label: string; href?: string }[] {
   const segments = pathname.split("/").filter(Boolean);
-  if (segments.length <= 1) return [];
+  if (segments.length === 0) return [];
 
   const [rootSegment, sectionSegment] = segments;
+  if (!sectionSegment) {
+    const rootItem = navItems.find((item) => item.href === pathname);
+    return rootItem ? [{ label: rootItem.label }] : [];
+  }
+
   const sectionHref = `/${rootSegment}/${sectionSegment}`;
   const sectionItem = navItems.find((item) => item.href === sectionHref);
 
@@ -103,80 +108,25 @@ export function AppShell({ children, variant }: AppShellProps) {
     router.replace("/login");
   }
 
-  function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
-    return (
-      <>
-        {navItems.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/dashboard" &&
-              item.href !== "/client" &&
-              pathname.startsWith(item.href));
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              className={cn(
-                "relative flex h-8 items-center gap-2.5 rounded-md px-2.5 text-sm font-medium text-sidebar-muted transition-[background-color,color,box-shadow] hover:bg-surface-2 hover:text-sidebar-foreground",
-                isActive &&
-                  "bg-sidebar-accent text-sidebar-foreground shadow-[inset_0_0_0_1px_rgba(130,143,255,0.1)] before:absolute before:left-0 before:top-1/2 before:h-4 before:w-0.5 before:-translate-y-1/2 before:rounded-full before:bg-ring/80",
-              )}
-            >
-              <Icon className="h-4 w-4" aria-hidden="true" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </>
-    );
-  }
-
-  function UserFooter({ onSignOut }: { onSignOut: () => void }) {
-    return (
-      <div className="mt-auto border-t border-sidebar-border pt-3">
-        <div className="flex items-center gap-2.5 rounded-md px-2 py-2">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-accent/20 text-[11px] font-semibold text-accent">
-            {initials}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium leading-tight text-sidebar-foreground">
-              {user?.name ?? "Workroom user"}
-            </p>
-            <p className="truncate text-xs leading-tight text-sidebar-muted">
-              {user?.email ?? ""}
-            </p>
-          </div>
-          <Button
-            className="h-7 w-7 shrink-0 text-sidebar-muted hover:text-sidebar-foreground"
-            onClick={onSignOut}
-            size="icon"
-            title="Sign out"
-            type="button"
-            variant="ghost"
-          >
-            <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="wr-app min-h-screen bg-background">
+    <div className="wr-app min-h-screen bg-background text-foreground">
       {/* Desktop sidebar */}
-      <aside className="wr-sidebar fixed inset-y-0 left-0 hidden w-[248px] border-r border-sidebar-border bg-sidebar px-3 py-4 lg:flex lg:flex-col">
-        <div className="px-2 py-1">
+      <aside className="wr-sidebar fixed inset-y-0 left-0 hidden w-[264px] border-r border-white/[0.075] bg-sidebar px-4 py-5 lg:flex lg:flex-col">
+        <div className="px-1 py-1">
           <AppLogo variant="dark" />
         </div>
-        <div className="mt-6 px-2 text-xs font-medium text-sidebar-muted">
+        <div className="mt-8 px-2 text-xs font-medium text-sidebar-muted">
           {workspaceLabel}
         </div>
-        <nav className="mt-3 flex-1 space-y-0.5">
-          <NavLinks />
+        <nav className="mt-3 flex-1 space-y-1">
+          <NavLinks navItems={navItems} pathname={pathname} />
         </nav>
-        <UserFooter onSignOut={handleSignOut} />
+        <UserFooter
+          email={user?.email ?? ""}
+          initials={initials}
+          name={user?.name ?? "Workroom user"}
+          onSignOut={handleSignOut}
+        />
       </aside>
 
       {/* Mobile drawer */}
@@ -184,21 +134,28 @@ export function AppShell({ children, variant }: AppShellProps) {
         <SheetContent
           side="left"
           showCloseButton={false}
-          className="wr-sidebar w-[248px] border-sidebar-border bg-sidebar px-3 py-4"
+          className="wr-sidebar w-[264px] border-white/[0.075] bg-sidebar px-4 py-5"
         >
           <SheetTitle className="sr-only">
             {workspaceLabel} navigation
           </SheetTitle>
-          <div className="px-2 py-1">
+          <div className="px-1 py-1">
             <AppLogo variant="dark" />
           </div>
-          <div className="mt-6 px-2 text-xs font-medium text-sidebar-muted">
+          <div className="mt-8 px-2 text-xs font-medium text-sidebar-muted">
             {workspaceLabel}
           </div>
-          <nav className="mt-3 flex-1 space-y-0.5">
-            <NavLinks onNavigate={() => setMobileOpen(false)} />
+          <nav className="mt-3 flex-1 space-y-1">
+            <NavLinks
+              navItems={navItems}
+              pathname={pathname}
+              onNavigate={() => setMobileOpen(false)}
+            />
           </nav>
           <UserFooter
+            email={user?.email ?? ""}
+            initials={initials}
+            name={user?.name ?? "Workroom user"}
             onSignOut={() => {
               setMobileOpen(false);
               handleSignOut();
@@ -207,14 +164,14 @@ export function AppShell({ children, variant }: AppShellProps) {
         </SheetContent>
       </Sheet>
 
-      <div className="lg:pl-[248px]">
-        <header className="wr-header sticky top-0 z-20 border-b border-sidebar-border bg-header">
-          <div className="flex h-14 items-center gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="lg:pl-[264px]">
+        <header className="sticky top-0 z-20 border-b border-white/[0.075] bg-background/88 backdrop-blur-xl">
+          <div className="flex h-[64px] items-center gap-4 px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3 lg:hidden">
               <Button
                 variant="secondary"
                 size="sm"
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 border-white/[0.08] bg-white/[0.025] p-0"
                 onClick={() => setMobileOpen(true)}
                 aria-label="Open navigation"
               >
@@ -253,7 +210,7 @@ export function AppShell({ children, variant }: AppShellProps) {
             )}
           </div>
         </header>
-        <main className="mx-auto w-full max-w-[1480px] px-4 py-8 sm:px-6 lg:px-8">
+        <main className="mx-auto w-full max-w-[1500px] px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           <div
             key={pathname}
             className="animate-in fade-in-0 slide-in-from-bottom-2 duration-300"
@@ -261,6 +218,84 @@ export function AppShell({ children, variant }: AppShellProps) {
             {children}
           </div>
         </main>
+      </div>
+    </div>
+  );
+}
+
+function NavLinks({
+  navItems,
+  onNavigate,
+  pathname,
+}: {
+  navItems: NavItem[];
+  onNavigate?: () => void;
+  pathname: string;
+}) {
+  return (
+    <>
+      {navItems.map((item) => {
+        const isActive =
+          pathname === item.href ||
+          (item.href !== "/dashboard" &&
+            item.href !== "/client" &&
+            pathname.startsWith(item.href));
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onNavigate}
+            className={cn(
+              "relative flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-medium text-sidebar-muted transition-[background-color,border-color,color,box-shadow] hover:bg-white/[0.04] hover:text-sidebar-foreground",
+              isActive &&
+                "border border-accent-border bg-accent-soft text-sidebar-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.025)] before:absolute before:left-0 before:top-1/2 before:h-4 before:w-0.5 before:-translate-y-1/2 before:rounded-full before:bg-ring/80",
+            )}
+          >
+            <Icon className="h-4 w-4" aria-hidden="true" />
+            {item.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
+function UserFooter({
+  email,
+  initials,
+  name,
+  onSignOut,
+}: {
+  email: string;
+  initials: string;
+  name: string;
+  onSignOut: () => void;
+}) {
+  return (
+    <div className="mt-auto border-t border-white/[0.075] pt-4">
+      <div className="flex items-center gap-2.5 rounded-md border border-white/[0.065] bg-white/[0.025] px-2.5 py-2.5">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-accent-border bg-accent-soft text-[11px] font-semibold text-accent">
+          {initials}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium leading-tight text-sidebar-foreground">
+            {name}
+          </p>
+          <p className="truncate text-xs leading-tight text-sidebar-muted">
+            {email}
+          </p>
+        </div>
+        <Button
+          className="h-8 w-8 shrink-0 text-sidebar-muted hover:text-sidebar-foreground"
+          onClick={onSignOut}
+          size="icon"
+          title="Sign out"
+          type="button"
+          variant="ghost"
+        >
+          <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+        </Button>
       </div>
     </div>
   );

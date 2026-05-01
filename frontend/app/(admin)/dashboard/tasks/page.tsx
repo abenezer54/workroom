@@ -184,33 +184,6 @@ export default function TasksPage() {
   );
 }
 
-function FilterSelect({
-  children,
-  id,
-  label,
-  onChange,
-  value,
-}: {
-  children: React.ReactNode;
-  id: string;
-  label: string;
-  onChange: (value: string) => void;
-  value: string;
-}) {
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
-      <Select
-        id={id}
-        onChange={(event) => onChange(event.target.value)}
-        value={value}
-      >
-        {children}
-      </Select>
-    </div>
-  );
-}
-
 function errorMessage(error: unknown) {
   if (error instanceof ApiError) {
     return error.message;

@@ -78,7 +78,7 @@ export function InvoiceDetailModal({
               <CardTitle>Line Items</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-hidden rounded-md border border-border">
+              <div className="overflow-hidden rounded-md border border-white/[0.075]">
                 <Table className="min-w-[620px]">
                   <TableHeader>
                     <TableRow className="hover:bg-transparent">
@@ -118,7 +118,7 @@ export function InvoiceDetailModal({
 
 function Summary({ label, value }: { label: string; value: string }) {
   return (
-    <div className="wr-panel rounded-md border border-border bg-surface-1 px-4 py-3">
+    <div className="wr-panel rounded-md border border-white/[0.075] bg-white/[0.025] px-4 py-3">
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
       <p className="mt-1 text-sm font-medium text-foreground">{value}</p>
     </div>

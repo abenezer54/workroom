@@ -71,16 +71,16 @@ export default function ClientPage() {
         title="Client Portal"
       />
 
-      <div className="wr-panel grid overflow-hidden rounded-lg border border-border bg-card/45 md:grid-cols-3">
+      <div className="wr-panel grid overflow-hidden rounded-lg border border-white/[0.075] bg-[#0b0c0d] md:grid-cols-3">
         <StatsCard
-          className="border-b border-border md:border-b-0 md:border-r"
+          className="border-b border-white/[0.065] md:border-b-0 md:border-r"
           helper="Currently in progress"
           icon={FolderKanban}
           label="Active projects"
           value={dashboard.active_projects}
         />
         <StatsCard
-          className="border-b border-border md:border-b-0 md:border-r"
+          className="border-b border-white/[0.065] md:border-b-0 md:border-r"
           helper="Sent or overdue"
           icon={FileText}
           label="Pending invoices"

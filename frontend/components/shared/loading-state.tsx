@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function LoadingState({ label = "Loading" }: { label?: string }) {
   return (
-    <div className="flex items-center gap-3 p-5 text-sm text-muted-foreground">
+    <div className="flex items-center gap-3 rounded-lg border border-white/[0.075] bg-white/[0.025] p-5 text-sm text-muted-foreground">
       <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />
       {label}
     </div>
@@ -15,7 +15,7 @@ export function LoadingState({ label = "Loading" }: { label?: string }) {
 
 function SkeletonRow() {
   return (
-    <div className="flex items-center gap-4 border-b border-border px-4 py-3 last:border-0">
+    <div className="flex items-center gap-4 border-b border-white/[0.065] px-4 py-3 last:border-0">
       <Skeleton className="h-4 w-[30%]" />
       <Skeleton className="h-4 w-[20%]" />
       <Skeleton className="h-4 w-[20%]" />
@@ -26,9 +26,9 @@ function SkeletonRow() {
 
 function SkeletonTablePanel({ rows = 6 }: { rows?: number }) {
   return (
-    <div className="wr-panel overflow-hidden rounded-lg border border-border bg-card">
+    <div className="wr-panel overflow-hidden rounded-lg border border-white/[0.075] bg-[#0b0c0d]">
       {/* Header row */}
-      <div className="flex items-center gap-4 border-b border-border bg-muted/50 px-4 py-2.5">
+      <div className="flex items-center gap-4 border-b border-white/[0.07] bg-white/[0.025] px-4 py-2.5">
         <Skeleton className="h-3 w-[18%]" />
         <Skeleton className="h-3 w-[14%]" />
         <Skeleton className="h-3 w-[14%]" />
@@ -43,7 +43,7 @@ function SkeletonTablePanel({ rows = 6 }: { rows?: number }) {
 
 function SkeletonToolbar() {
   return (
-    <div className="wr-panel rounded-lg border border-border bg-card/35 px-4 py-4">
+    <div className="wr-panel rounded-lg border border-white/[0.075] bg-white/[0.025] px-4 py-4">
       <div className="flex gap-4">
         <Skeleton className="h-9 w-full max-w-xs" />
         <Skeleton className="h-9 w-[160px]" />
@@ -54,7 +54,7 @@ function SkeletonToolbar() {
 
 function SkeletonPageHeader() {
   return (
-    <div className="flex items-start justify-between">
+    <div className="flex items-start justify-between border-b border-white/[0.06] pb-6">
       <div className="space-y-2">
         <Skeleton className="h-7 w-40" />
         <Skeleton className="h-4 w-72" />
@@ -84,11 +84,11 @@ export function DashboardSkeleton() {
       <SkeletonPageHeader />
 
       {/* Stats grid */}
-      <div className="wr-panel grid overflow-hidden rounded-lg border border-border bg-card/45 md:grid-cols-2 xl:grid-cols-4">
+      <div className="wr-panel grid overflow-hidden rounded-lg border border-white/[0.075] bg-[#0b0c0d] md:grid-cols-2 xl:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
-            className="flex items-start justify-between gap-4 border-b border-border p-4 last:border-0 md:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0"
+            className="flex items-start justify-between gap-4 border-b border-white/[0.065] p-4 last:border-0 md:odd:border-r xl:border-b-0 xl:border-r xl:last:border-r-0"
           >
             <div className="space-y-2">
               <Skeleton className="h-3 w-24" />
@@ -116,11 +116,11 @@ export function DashboardSkeleton() {
 
 function SkeletonSection({ rows = 4 }: { rows?: number }) {
   return (
-    <div className="wr-panel overflow-hidden rounded-lg border border-border bg-card/50">
-      <div className="border-b border-border px-4 py-3">
+    <div className="wr-panel overflow-hidden rounded-lg border border-white/[0.075] bg-[#0b0c0d]">
+      <div className="border-b border-white/[0.07] bg-white/[0.018] px-4 py-3">
         <Skeleton className="h-4 w-36" />
       </div>
-      <div className="divide-y divide-border">
+      <div className="divide-y divide-white/[0.065]">
         {Array.from({ length: rows }).map((_, i) => (
           <div
             key={i}
@@ -156,7 +156,7 @@ export function ProjectDetailSkeleton() {
       </div>
 
       {/* Summary metadata */}
-      <div className="wr-panel grid gap-4 rounded-lg border border-border bg-card/50 p-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="wr-panel grid gap-4 rounded-lg border border-white/[0.075] bg-[#0b0c0d] p-4 sm:grid-cols-2 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="space-y-1.5">
             <Skeleton className="h-3 w-16" />
@@ -182,11 +182,11 @@ export function ClientPortalSkeleton() {
       <SkeletonPageHeader />
 
       {/* Stats row */}
-      <div className="wr-panel grid overflow-hidden rounded-lg border border-border bg-card/45 md:grid-cols-3">
+      <div className="wr-panel grid overflow-hidden rounded-lg border border-white/[0.075] bg-[#0b0c0d] md:grid-cols-3">
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="flex items-start justify-between gap-4 border-b border-border p-4 last:border-0 md:border-b-0 md:border-r md:last:border-r-0"
+            className="flex items-start justify-between gap-4 border-b border-white/[0.065] p-4 last:border-0 md:border-b-0 md:border-r md:last:border-r-0"
           >
             <div className="space-y-2">
               <Skeleton className="h-3 w-24" />
@@ -209,7 +209,7 @@ export function ClientPortalSkeleton() {
 
 export function SectionListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
-    <div className="divide-y divide-border">
+    <div className="divide-y divide-white/[0.065]">
       {Array.from({ length: rows }).map((_, i) => (
         <div
           key={i}
