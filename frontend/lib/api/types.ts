@@ -28,6 +28,11 @@ export type RegisterRequest = {
   password: string;
 };
 
+export type GoogleAuthRequest = {
+  credential: string;
+  mode: "login" | "register";
+};
+
 export type ApiSuccess<T> = {
   success: true;
   data: T;

@@ -15,8 +15,10 @@ type UserRepository interface {
 	Create(user *models.User) error
 	FindByID(id uuid.UUID) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
+	FindByGoogleSubject(subject string) (*models.User, error)
 	EmailExists(email string) (bool, error)
 	UpdateAgencyID(userID uuid.UUID, agencyID uuid.UUID) error
+	UpdateGoogleSubject(userID uuid.UUID, subject string) error
 	UpdateLastLoginAt(userID uuid.UUID, loggedInAt time.Time) error
 }
 
@@ -57,6 +59,18 @@ func (r *userRepository) FindByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
+func (r *userRepository) FindByGoogleSubject(subject string) (*models.User, error) {
+	var user models.User
+	if err := r.db.Where("google_subject = ?", strings.TrimSpace(subject)).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func (r *userRepository) EmailExists(email string) (bool, error) {
 	var count int64
 	if err := r.db.Model(&models.User{}).Where("LOWER(email) = ?", normalizeEmail(email)).Count(&count).Error; err != nil {
@@ -68,6 +82,10 @@ func (r *userRepository) EmailExists(email string) (bool, error) {
 
 func (r *userRepository) UpdateAgencyID(userID uuid.UUID, agencyID uuid.UUID) error {
 	return r.db.Model(&models.User{}).Where("id = ?", userID).Update("agency_id", agencyID).Error
+}
+
+func (r *userRepository) UpdateGoogleSubject(userID uuid.UUID, subject string) error {
+	return r.db.Model(&models.User{}).Where("id = ?", userID).Update("google_subject", strings.TrimSpace(subject)).Error
 }
 
 func (r *userRepository) UpdateLastLoginAt(userID uuid.UUID, loggedInAt time.Time) error {

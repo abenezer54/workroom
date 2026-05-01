@@ -54,6 +54,22 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	response.OK(c, result)
 }
 
+func (h *AuthHandler) Google(c *gin.Context) {
+	var req dto.GoogleAuthRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondValidationError(c, err)
+		return
+	}
+
+	result, err := h.auth.GoogleSignIn(c.Request.Context(), req)
+	if err != nil {
+		respondAppError(c, err)
+		return
+	}
+
+	response.OK(c, result)
+}
+
 func (h *AuthHandler) Me(c *gin.Context) {
 	userID, ok := c.Get("user_id")
 	if !ok {

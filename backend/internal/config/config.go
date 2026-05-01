@@ -16,6 +16,7 @@ type Config struct {
 	JWTSecret          string
 	JWTExpiresIn       time.Duration
 	CORSAllowedOrigins []string
+	GoogleClientID     string
 }
 
 func Load() Config {
@@ -30,6 +31,7 @@ func Load() Config {
 		JWTSecret:          getEnv("JWT_SECRET", "change-me-local-dev-secret"),
 		JWTExpiresIn:       getDurationEnv("JWT_EXPIRES_IN", 24*time.Hour),
 		CORSAllowedOrigins: splitCSV(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")),
+		GoogleClientID:     getEnv("GOOGLE_CLIENT_ID", ""),
 	}
 }
 

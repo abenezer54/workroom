@@ -19,6 +19,11 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required,min=8,max=128"`
 }
 
+type GoogleAuthRequest struct {
+	Credential string `json:"credential" binding:"required,max=4096"`
+	Mode       string `json:"mode" binding:"required,oneof=login register"`
+}
+
 type AuthResponse struct {
 	User        UserResponse `json:"user"`
 	AccessToken string       `json:"access_token"`

@@ -20,6 +20,7 @@ type User struct {
 	Name         string         `gorm:"type:text;not null" json:"name"`
 	Email        string         `gorm:"type:text;not null" json:"email"`
 	PasswordHash string         `gorm:"type:text;not null" json:"-"`
+	GoogleSubject *string       `gorm:"type:text;index" json:"-"`
 	Role         UserRole       `gorm:"type:user_role;not null" json:"role"`
 	ClientID     *uuid.UUID     `gorm:"type:uuid;index" json:"client_id,omitempty"`
 	IsActive     bool           `gorm:"not null;default:true" json:"is_active"`

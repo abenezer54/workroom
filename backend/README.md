@@ -191,6 +191,7 @@ curl http://localhost:8080/api/v1/health
 | `JWT_SECRET` | `change-me-local-dev-secret` | Secret used to sign JWT access tokens. Set a strong value outside local development. |
 | `JWT_EXPIRES_IN` | `24h` | JWT access token lifetime. |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:3000` | Comma-separated allowed frontend origins. |
+| `GOOGLE_CLIENT_ID` | empty | Google OAuth web client ID used to verify Google ID tokens. Google auth is unavailable when empty. |
 
 ## Auth Endpoints
 
@@ -216,6 +217,19 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
     "password": "secure-password"
   }'
 ```
+
+Log in or register with Google:
+
+```sh
+curl -X POST http://localhost:8080/api/v1/auth/google \
+  -H "Content-Type: application/json" \
+  -d '{
+    "credential": "GOOGLE_ID_TOKEN",
+    "mode": "login"
+  }'
+```
+
+Use `"mode": "register"` from the agency registration page. Login mode links Google to an existing Workroom account with the same verified email; register mode creates a new agency admin only when that email is not already registered.
 
 Copy the returned `access_token`, then call the current user endpoint:
 

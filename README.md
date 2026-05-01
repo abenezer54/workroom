@@ -199,6 +199,8 @@ Key variables:
 | `JWT_SECRET` | Secret used to sign JWT access tokens |
 | `JWT_EXPIRES_IN` | JWT token lifetime |
 | `CORS_ALLOWED_ORIGINS` | Allowed frontend origins |
+| `GOOGLE_CLIENT_ID` | Google OAuth web client ID used by the backend to verify Google ID tokens |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Same Google OAuth web client ID exposed to the frontend Google button |
 
 ## Product Scope
 

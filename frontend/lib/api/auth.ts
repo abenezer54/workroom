@@ -3,6 +3,7 @@ import { apiClient } from "@/lib/api/client";
 import type {
   AuthResponse,
   CurrentUser,
+  GoogleAuthRequest,
   LoginRequest,
   RegisterRequest,
 } from "./types";
@@ -22,6 +23,13 @@ export function register(request: RegisterRequest) {
       email: request.email,
       password: request.password,
     },
+  });
+}
+
+export function googleSignIn(request: GoogleAuthRequest) {
+  return apiClient<AuthResponse>("/auth/google", {
+    method: "POST",
+    body: request,
   });
 }
 

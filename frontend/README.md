@@ -44,11 +44,13 @@ http://localhost:3000
 | Variable | Description |
 | --- | --- |
 | `NEXT_PUBLIC_API_URL` | Workroom backend API base URL |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Google OAuth web client ID used by the Google sign-in/sign-up button |
 
 Default local value:
 
 ```txt
 NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=replace-with-google-oauth-client-id
 ```
 
 ## Scripts
@@ -102,6 +104,7 @@ Auth helpers live in `lib/auth`.
 
 - `token.ts` centralizes access token storage.
 - `auth-provider.tsx` loads the current user with `/auth/me`.
+- Google login and signup use Google Identity Services, then exchange the returned ID token with `/auth/google`.
 - `roles.ts` contains role utilities for `AGENCY_ADMIN` and `CLIENT`.
 - `useRequireRole` provides a client-side route protection helper for app shells.
 

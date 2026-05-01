@@ -5,16 +5,18 @@ import { useMutation } from "@tanstack/react-query";
 import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { GoogleAuthButton } from "@/components/auth/google-auth-button";
 import { ErrorState } from "@/components/shared/error-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError } from "@/lib/api/client";
-import { login, register } from "@/lib/api/auth";
+import { googleSignIn, login, register } from "@/lib/api/auth";
+import type { AuthResponse } from "@/lib/api/types";
 import { useAuth } from "@/lib/auth/auth-provider";
 import { dashboardPathForRole } from "@/lib/auth/roles";
 import {
@@ -32,6 +34,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const { isLoading, setSession, user } = useAuth();
   const isLogin = mode === "login";
+  const [googleError, setGoogleError] = useState<string | null>(null);
 
   const loginForm = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -57,26 +60,58 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
   }, [isLoading, router, user]);
 
+  function completeAuth(session: AuthResponse) {
+    setSession(session);
+    router.replace(dashboardPathForRole(session.user.role));
+  }
+
   const mutation = useMutation({
     mutationFn: (values: LoginValues | RegisterValues) =>
       isLogin ? login(values) : register(values as RegisterValues),
-    onSuccess(session) {
-      setSession(session);
-      router.replace(dashboardPathForRole(session.user.role));
+    onMutate() {
+      setGoogleError(null);
     },
+    onSuccess: completeAuth,
+  });
+
+  const googleMutation = useMutation({
+    mutationFn: (credential: string) => googleSignIn({ credential, mode }),
+    onMutate() {
+      setGoogleError(null);
+    },
+    onSuccess: completeAuth,
   });
 
   const submitLogin = loginForm.handleSubmit((values) => mutation.mutate(values));
   const submitRegister = registerForm.handleSubmit((values) =>
     mutation.mutate(values),
   );
-  const error =
+  const emailAuthError =
     mutation.error instanceof ApiError
       ? mutation.error.message
       : mutation.error
         ? "The request could not be completed."
         : null;
-  const isPending = mutation.isPending;
+  const googleAuthError =
+    googleMutation.error instanceof ApiError
+      ? googleMutation.error.message
+      : googleMutation.error
+        ? "Google sign-in could not be completed."
+        : null;
+  const error = googleError ?? emailAuthError ?? googleAuthError;
+  const isPending = mutation.isPending || googleMutation.isPending;
+  const isEmailPending = mutation.isPending;
+
+  const handleGoogleCredential = useCallback(
+    (credential: string) => {
+      googleMutation.mutate(credential);
+    },
+    [googleMutation],
+  );
+
+  const handleGoogleError = useCallback((message: string) => {
+    setGoogleError(message);
+  }, []);
 
   function fillDemoAccount(email: string) {
     loginForm.setValue("email", email, {
@@ -91,8 +126,8 @@ export function AuthForm({ mode }: AuthFormProps) {
 
   if (!isLoading && user) {
     return (
-    <Card>
-      <CardContent className="p-5">
+      <Card>
+        <CardContent className="p-5">
           <p className="text-sm text-muted-foreground">
             Redirecting to your workspace...
           </p>
@@ -105,6 +140,18 @@ export function AuthForm({ mode }: AuthFormProps) {
     <Card className="shadow-[0_12px_40px_rgba(0,0,0,0.46)]">
       <CardContent className="space-y-5 p-5">
         {error ? <ErrorState message={error} /> : null}
+        <GoogleAuthButton
+          mode={mode}
+          disabled={mutation.isPending}
+          isPending={googleMutation.isPending}
+          onCredential={handleGoogleCredential}
+          onError={handleGoogleError}
+        />
+        <div className="flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs text-muted-foreground">or</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
         <form
           className="space-y-4"
           onSubmit={isLogin ? submitLogin : submitRegister}
@@ -191,17 +238,17 @@ export function AuthForm({ mode }: AuthFormProps) {
           ) : null}
 
           <Button className="w-full" type="submit" disabled={isPending}>
-            {isPending ? (
+            {isEmailPending ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             ) : null}
             {isLogin
-              ? isPending
+              ? isEmailPending
                 ? "Logging in"
                 : "Log in"
-              : isPending
+              : isEmailPending
                 ? "Creating account"
                 : "Create account"}
-            {!isPending ? (
+            {!isEmailPending ? (
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             ) : null}
           </Button>
