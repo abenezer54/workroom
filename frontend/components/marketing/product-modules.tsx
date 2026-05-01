@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { AnimatedProgressBar } from "@/components/shared/animated-progress-bar";
+import { LogoMark } from "@/components/shared/app-logo";
 import { ScrollReveal } from "@/components/shared/scroll-reveal";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -123,7 +124,7 @@ export function ProductModules() {
               One workspace for every client relationship.
             </h2>
             <p className="mt-5 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-              Workroom keeps clients, projects, tasks, updates, invoices, and
+              workroom keeps clients, projects, tasks, updates, invoices, and
               portal access connected around the same account.
             </p>
 
@@ -146,9 +147,7 @@ export function ProductModules() {
           <div className="overflow-hidden rounded-lg border border-white/[0.09] bg-[#0b0c0d] shadow-[0_24px_90px_rgba(0,0,0,0.28)]">
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.075] bg-white/[0.018] px-5 py-4">
               <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.055] text-sm font-semibold text-foreground">
-                  W
-                </span>
+                <LogoMark />
                 <div>
                   <p className="text-sm font-semibold text-foreground">
                     Acme Studio

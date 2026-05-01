@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import { AnimatedProgressBar } from "@/components/shared/animated-progress-bar";
+import { LogoMark } from "@/components/shared/app-logo";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -173,11 +174,9 @@ function PreviewSidebar({
   return (
     <aside className="border-r border-white/[0.075] bg-black/20 p-5">
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.09] bg-white/[0.055] text-sm font-semibold text-foreground">
-          W
-        </span>
+        <LogoMark />
         <div>
-          <p className="text-sm font-semibold text-foreground">Workroom</p>
+          <p className="text-sm font-semibold text-foreground">workroom</p>
           <p className="text-xs text-muted-foreground">Agency workspace</p>
         </div>
       </div>

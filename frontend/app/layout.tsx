@@ -5,7 +5,7 @@ import { Providers } from "@/components/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Workroom",
+  title: "workroom",
   description: "Client portal for service businesses.",
 };
 

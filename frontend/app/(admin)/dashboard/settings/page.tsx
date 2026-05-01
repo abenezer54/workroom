@@ -22,7 +22,7 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        description="Manage your Workroom account and workspace preferences."
+        description="Manage your workroom account and workspace preferences."
         title="Settings"
       />
 

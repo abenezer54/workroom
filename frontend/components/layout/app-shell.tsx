@@ -124,7 +124,7 @@ export function AppShell({ children, variant }: AppShellProps) {
         <UserFooter
           email={user?.email ?? ""}
           initials={initials}
-          name={user?.name ?? "Workroom user"}
+          name={user?.name ?? "workroom user"}
           onSignOut={handleSignOut}
         />
       </aside>
@@ -155,7 +155,7 @@ export function AppShell({ children, variant }: AppShellProps) {
           <UserFooter
             email={user?.email ?? ""}
             initials={initials}
-            name={user?.name ?? "Workroom user"}
+            name={user?.name ?? "workroom user"}
             onSignOut={() => {
               setMobileOpen(false);
               handleSignOut();

@@ -94,7 +94,7 @@ function WorkspacesSection() {
             </h2>
           </div>
           <p className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7 lg:justify-self-end">
-            Workroom separates what your team manages from what each client can
+            workroom separates what your team manages from what each client can
             safely review, without splitting the work across tools.
           </p>
         </div>

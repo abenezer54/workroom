@@ -21,7 +21,7 @@ export function AuthLayout({ title, description, children }: AuthLayoutProps) {
             A calm workspace for project updates, tasks, and invoices.
           </h1>
           <p className="text-sm leading-6 text-sidebar-muted">
-            Workroom keeps agency operations and client visibility in one
+            workroom keeps agency operations and client visibility in one
             focused portal.
           </p>
           <div className="grid gap-2 pt-4">

@@ -5,7 +5,7 @@ export default function RegisterPage() {
   return (
     <AuthLayout
       title="Create agency account"
-      description="Set up an agency admin account for your Workroom workspace."
+      description="Set up an agency admin account for your workroom workspace."
     >
       <AuthForm mode="register" />
     </AuthLayout>
