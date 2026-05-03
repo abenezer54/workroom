@@ -19,6 +19,7 @@ import {
 
 import { AnimatedProgressBar } from "@/components/shared/animated-progress-bar";
 import { LogoMark } from "@/components/shared/app-logo";
+import { BentoCard } from "@/components/marketing/bento-card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -113,14 +114,17 @@ export function ProductPreview() {
   return (
     <div
       id="product"
-      className="relative mx-auto mt-12 max-w-[1320px] scroll-mt-28 sm:mt-14"
+      className="relative mx-auto mt-12 max-w-[1320px] scroll-mt-28 sm:mt-14 [perspective:2000px]"
     >
-      <div className="relative overflow-hidden rounded-[18px] border border-white/[0.11] bg-[#0b0c0d] shadow-[0_22px_34px_rgba(0,0,0,0.34),0_48px_120px_rgba(0,0,0,0.42)]">
-        <div className="grid min-h-12 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-white/[0.075] bg-white/[0.018] px-4">
+      <BentoCard 
+        glowSize={1200}
+        className="group relative overflow-hidden rounded-[20px] border border-white/[0.08] bg-black shadow-[0_32px_100px_rgba(0,0,0,0.6)] transition-all duration-700 ease-out origin-top [transform:rotateX(8deg)_translateY(-20px)] hover:[transform:rotateX(0deg)_translateY(0px)]"
+      >
+        <div className="grid min-h-12 grid-cols-[1fr_auto_1fr] items-center gap-3 border-b border-white/[0.075] bg-white/[0.02] px-4 py-3">
           <div className="flex items-center gap-2 justify-self-start">
-            <span className="h-2.5 w-2.5 rounded-full bg-white/18" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/12" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/10" />
+            <span className="h-3 w-3 rounded-full bg-white/20" />
+            <span className="h-3 w-3 rounded-full bg-white/20" />
+            <span className="h-3 w-3 rounded-full bg-white/20" />
           </div>
 
           <p className="hidden text-xs font-medium text-muted-foreground sm:block">
@@ -128,20 +132,20 @@ export function ProductPreview() {
           </p>
 
           <div className="flex items-center gap-3 justify-self-end">
-            <Badge variant={activePreviewTab.badgeVariant}>
+            <Badge variant={activePreviewTab.badgeVariant} className="scale-90">
               {activePreviewTab.badge}
             </Badge>
           </div>
         </div>
 
-        <div className="hidden min-h-[650px] grid-cols-[244px_minmax(0,1fr)_342px] lg:grid">
+        <div className="hidden min-h-[650px] grid-cols-[244px_minmax(0,1fr)_342px] bg-[#0b0c0d] lg:grid">
           <PreviewSidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
-          <main className="min-w-0 border-r border-white/[0.075]">
+          <main className="min-w-0 border-r border-white/[0.05]">
             <div
               key={activeTab}
               aria-label={`${activePreviewTab.label} preview`}
-              className="h-full"
+              className="h-full animate-in fade-in duration-500"
               id={`preview-panel-${activeTab}`}
               role="tabpanel"
             >
@@ -151,7 +155,7 @@ export function ProductPreview() {
             </div>
           </main>
 
-          <aside className="min-w-0 bg-black/10 p-5">
+          <aside className="min-w-0 bg-white/[0.01] p-5">
             {activeTab === "dashboard" ? <DashboardAside /> : null}
             {activeTab === "projects" ? <ProjectsAside /> : null}
             {activeTab === "portal" ? <PortalAside /> : null}
@@ -159,7 +163,7 @@ export function ProductPreview() {
         </div>
 
         <MobilePreview activeTab={activeTab} />
-      </div>
+      </BentoCard>
     </div>
   );
 }

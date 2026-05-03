@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { BentoCard } from "@/components/marketing/bento-card";
 import { AnimatedProgressBar } from "@/components/shared/animated-progress-bar";
 import { LogoMark } from "@/components/shared/app-logo";
 import { ScrollReveal } from "@/components/shared/scroll-reveal";
@@ -99,8 +100,7 @@ const productModules: ProductModule[] = [
 ];
 
 export function ProductModules() {
-  const [activeModule, setActiveModule] =
-    useState<ProductModuleId>("clients");
+  const [activeModule, setActiveModule] = useState<ProductModuleId>("clients");
   const active = useMemo(
     () =>
       productModules.find((module) => module.id === activeModule) ??
@@ -112,83 +112,83 @@ export function ProductModules() {
   return (
     <section
       id="features"
-      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24"
+      className="scroll-mt-28 border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24 relative overflow-hidden"
     >
-      <ScrollReveal className="mx-auto max-w-[1320px]">
-        <div className="grid gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">
-              Product modules
-            </p>
-            <h2 className="mt-5 max-w-2xl text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
+      <div className="absolute left-1/2 top-1/2 -z-10 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-info/5 blur-[120px]" />
+      
+      <ScrollReveal className="mx-auto max-w-[1000px]">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium text-info">Product modules</p>
+            <h2 className="mt-5 text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
               One workspace for every client relationship.
             </h2>
-            <p className="mt-5 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
-              workroom keeps clients, projects, tasks, updates, invoices, and
-              portal access connected around the same account.
+            <p className="mt-5 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+              workroom keeps clients, projects, tasks, updates, invoices, and portal access connected around the same account.
             </p>
-
-            <div
-              aria-label="Product modules"
-              className="mt-9 grid gap-2 rounded-lg border border-white/[0.075] bg-white/[0.018] p-2"
-              role="tablist"
-            >
-              {productModules.map((module) => (
-                <ProductModuleButton
-                  key={module.id}
-                  active={activeModule === module.id}
-                  module={module}
-                  onClick={() => setActiveModule(module.id)}
-                />
-              ))}
-            </div>
           </div>
 
-          <div className="overflow-hidden rounded-lg border border-white/[0.09] bg-[#0b0c0d] shadow-[0_24px_90px_rgba(0,0,0,0.28)]">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.075] bg-white/[0.018] px-5 py-4">
-              <div className="flex items-center gap-3">
-                <LogoMark />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">
-                    Acme Studio
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Client workspace overview
-                  </p>
-                </div>
+          <div
+            aria-label="Product modules"
+            className="inline-flex shrink-0 rounded-full border border-white/[0.075] bg-white/[0.018] p-1.5 backdrop-blur-md overflow-x-auto max-w-full"
+            role="tablist"
+          >
+            {productModules.map((module) => (
+              <ProductModuleButton
+                key={module.id}
+                active={activeModule === module.id}
+                module={module}
+                onClick={() => setActiveModule(module.id)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <BentoCard glowSize={1000} className="overflow-hidden rounded-[20px] bg-black shadow-[0_32px_100px_rgba(0,0,0,0.6)]">
+            <div className="flex items-center justify-between border-b border-white/[0.075] bg-white/[0.02] px-4 py-3">
+              <div className="flex items-center gap-2">
+                <div className="h-3 w-3 rounded-full bg-white/20" />
+                <div className="h-3 w-3 rounded-full bg-white/20" />
+                <div className="h-3 w-3 rounded-full bg-white/20" />
               </div>
-              <Badge variant={active.badgeVariant}>{active.badge}</Badge>
+              <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <LogoMark className="h-3.5 w-3.5" />
+                Acme Studio Workspace
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant={active.badgeVariant} className="scale-90">{active.badge}</Badge>
+              </div>
             </div>
 
-            <div className="grid lg:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="grid lg:grid-cols-[1fr_320px] bg-[#0b0c0d]">
               <div
                 aria-labelledby={`module-tab-${activeModule}`}
-                className="grid gap-4 p-4 sm:p-5 md:grid-cols-2"
+                className="relative min-h-[440px] p-6 sm:p-8"
                 id="module-panel"
                 role="tabpanel"
               >
-                <ClientRecordPanel active={activeModule === "clients"} />
-                <ProjectPanel active={activeModule === "projects"} />
-                <UpdatesPanel active={activeModule === "updates"} />
-                <InvoicesPanel active={activeModule === "invoices"} />
+                <div key={activeModule} className="grid gap-6 md:grid-cols-2 animate-in fade-in zoom-in-95 duration-500 fill-mode-forwards">
+                  {activeModule === "clients" && <ClientRecordPanel />}
+                  {activeModule === "projects" && <ProjectPanel />}
+                  {activeModule === "updates" && <UpdatesPanel />}
+                  {activeModule === "invoices" && <InvoicesPanel />}
+                </div>
               </div>
 
-              <aside className="border-t border-white/[0.075] bg-black/10 p-5 lg:border-l lg:border-t-0">
+              <aside className="border-t border-white/[0.05] bg-white/[0.01] p-6 lg:border-l lg:border-t-0">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/[0.075] bg-white/[0.035] text-info">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/[0.075] bg-white/[0.035] text-info">
                     <ActiveIcon className="h-4 w-4" aria-hidden="true" />
                   </span>
                   <div>
-                    <p className="text-xs font-medium uppercase text-muted-foreground">
-                      Selected module
-                    </p>
-                    <h3 className="mt-1 text-base font-semibold text-foreground">
+                    <h3 className="text-base font-semibold text-foreground">
                       {active.label}
                     </h3>
                   </div>
                 </div>
 
-                <p className="mt-5 text-sm leading-6 text-muted-foreground">
+                <p className="mt-4 text-sm leading-6 text-muted-foreground">
                   {active.description}
                 </p>
 
@@ -196,7 +196,7 @@ export function ProductModules() {
                   {active.details.map((detail) => (
                     <div
                       key={detail}
-                      className="flex items-center gap-3 rounded-md border border-white/[0.07] bg-white/[0.025] px-3 py-2.5 text-sm text-muted-foreground"
+                      className="flex items-center gap-3 rounded-lg border border-white/[0.07] bg-white/[0.02] px-3 py-2.5 text-sm text-muted-foreground shadow-sm"
                     >
                       <CheckCircle2
                         className="h-4 w-4 shrink-0 text-success"
@@ -207,7 +207,7 @@ export function ProductModules() {
                   ))}
                 </div>
 
-                <div className="mt-6 rounded-lg border border-white/[0.075] bg-white/[0.025] p-4">
+                <div className="mt-8 rounded-xl border border-white/[0.05] bg-white/[0.02] p-5 shadow-sm">
                   <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <PanelRight className="h-4 w-4 text-info" />
                     Portal boundary
@@ -219,7 +219,7 @@ export function ProductModules() {
                 </div>
               </aside>
             </div>
-          </div>
+          </BentoCard>
         </div>
       </ScrollReveal>
     </section>
@@ -242,48 +242,29 @@ function ProductModuleButton({
       aria-controls="module-panel"
       aria-selected={active}
       className={cn(
-        "grid grid-cols-[40px_minmax(0,1fr)_auto] items-center gap-3 rounded-md border px-3 py-3 text-left transition-[background-color,border-color] duration-200",
+        "flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-medium transition-all duration-200",
         active
-          ? "border-accent-border bg-accent-soft"
-          : "border-transparent hover:border-white/[0.09] hover:bg-white/[0.03]",
+          ? "bg-white/10 text-foreground shadow-sm ring-1 ring-white/10"
+          : "text-muted-foreground hover:bg-white/[0.05] hover:text-foreground",
       )}
       id={`module-tab-${module.id}`}
       role="tab"
       type="button"
       onClick={onClick}
     >
-      <span
-        className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-md border transition-[background-color,border-color,color] duration-200",
-          active
-            ? "border-accent-border bg-white/[0.055] text-info"
-            : "border-white/[0.075] bg-black/15 text-muted-foreground",
-        )}
-      >
-        <Icon className="h-4 w-4" aria-hidden="true" />
-      </span>
-      <span className="min-w-0">
-        <span className="block text-sm font-semibold text-foreground">
-          {module.label}
-        </span>
-        <span className="mt-1 block truncate text-xs text-muted-foreground">
-          {module.title}
-        </span>
-      </span>
-      <Badge variant={module.badgeVariant}>{module.badge}</Badge>
+      <Icon className={cn("h-4 w-4", active ? "text-info" : "text-muted-foreground")} aria-hidden="true" />
+      {module.label}
     </button>
   );
 }
 
 function ProductPanel({
-  active,
   icon: Icon,
   title,
   badge,
   badgeVariant,
   children,
 }: {
-  active: boolean;
   icon: LucideIcon;
   title: string;
   badge: string;
@@ -291,38 +272,24 @@ function ProductPanel({
   children: ReactNode;
 }) {
   return (
-    <section
-      className={cn(
-        "rounded-lg border bg-white/[0.025] transition-[background-color,border-color] duration-200",
-        active
-          ? "border-accent-border bg-white/[0.045]"
-          : "border-white/[0.075]",
-      )}
-    >
-      <div className="flex items-center justify-between gap-3 border-b border-white/[0.075] px-4 py-3">
+    <div className="rounded-xl border border-white/[0.06] bg-black/40 backdrop-blur-sm shadow-sm flex flex-col h-full">
+      <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] px-4 py-3 bg-white/[0.01] rounded-t-xl shrink-0">
         <div className="flex min-w-0 items-center gap-2">
-          <Icon
-            className={cn(
-              "h-4 w-4 shrink-0",
-              active ? "text-info" : "text-muted-foreground",
-            )}
-            aria-hidden="true"
-          />
-          <h3 className="truncate text-sm font-semibold text-foreground">
+          <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          <h3 className="truncate text-sm font-medium text-foreground">
             {title}
           </h3>
         </div>
-        <Badge variant={badgeVariant}>{badge}</Badge>
+        <Badge variant={badgeVariant} className="scale-90">{badge}</Badge>
       </div>
-      <div className="p-4">{children}</div>
-    </section>
+      <div className="p-4 sm:p-5 flex-1">{children}</div>
+    </div>
   );
 }
 
-function ClientRecordPanel({ active }: { active: boolean }) {
+function ClientRecordPanel() {
   return (
     <ProductPanel
-      active={active}
       badge="Agency-owned"
       badgeVariant="info"
       icon={UsersRound}
@@ -338,7 +305,7 @@ function ClientRecordPanel({ active }: { active: boolean }) {
         <MiniMetric label="Active projects" value="1" />
         <MiniMetric label="Portal users" value="3" />
       </div>
-      <div className="mt-4 space-y-3">
+      <div className="mt-5 space-y-3">
         <RecordLine label="Owner" value="Jordan Lee" />
         <RecordLine label="Primary contact" value="Maya Chen" />
         <RecordLine label="Access" value="Client-scoped" />
@@ -347,10 +314,9 @@ function ClientRecordPanel({ active }: { active: boolean }) {
   );
 }
 
-function ProjectPanel({ active }: { active: boolean }) {
+function ProjectPanel() {
   return (
     <ProductPanel
-      active={active}
       badge="In Progress"
       badgeVariant="warning"
       icon={FolderKanban}
@@ -367,7 +333,7 @@ function ProjectPanel({ active }: { active: boolean }) {
         </div>
         <span className="font-mono text-xs text-muted-foreground">WR-021</span>
       </div>
-      <div className="mt-5">
+      <div className="mt-6">
         <div className="flex items-center justify-between gap-4 text-sm">
           <span className="font-medium text-foreground">Progress</span>
           <span className="text-muted-foreground">68%</span>
@@ -378,7 +344,7 @@ function ProjectPanel({ active }: { active: boolean }) {
           value={68}
         />
       </div>
-      <div className="mt-4 grid gap-3">
+      <div className="mt-6 grid gap-3">
         <MilestoneLine label="Homepage review" state="Client" />
         <MilestoneLine label="QA pass" state="Internal" />
       </div>
@@ -386,10 +352,9 @@ function ProjectPanel({ active }: { active: boolean }) {
   );
 }
 
-function UpdatesPanel({ active }: { active: boolean }) {
+function UpdatesPanel() {
   return (
     <ProductPanel
-      active={active}
       badge="Published"
       badgeVariant="success"
       icon={MessageSquareText}
@@ -400,7 +365,7 @@ function UpdatesPanel({ active }: { active: boolean }) {
         <TaskLine label="Share milestone update" state="Visible" />
         <TaskLine label="Internal QA notes" state="Private" />
       </div>
-      <div className="mt-4 rounded-md border border-white/[0.07] bg-black/15 p-3">
+      <div className="mt-5 rounded-md border border-white/[0.07] bg-black/20 p-3.5">
         <p className="text-xs font-medium text-info">Latest update</p>
         <p className="mt-2 text-sm leading-5 text-muted-foreground">
           Homepage structure is approved and final polish is in progress.
@@ -410,10 +375,9 @@ function UpdatesPanel({ active }: { active: boolean }) {
   );
 }
 
-function InvoicesPanel({ active }: { active: boolean }) {
+function InvoicesPanel() {
   return (
     <ProductPanel
-      active={active}
       badge="Sent"
       badgeVariant="neutral"
       icon={BadgeDollarSign}
@@ -424,7 +388,7 @@ function InvoicesPanel({ active }: { active: boolean }) {
         <InvoiceRow amount="$8,000" invoice="WR-1038" state="Paid" />
         <InvoiceRow amount="$5,500" invoice="WR-1031" state="Overdue" />
       </div>
-      <div className="mt-4 flex items-center justify-between rounded-md border border-white/[0.07] bg-black/15 px-3 py-2.5">
+      <div className="mt-5 flex items-center justify-between rounded-md border border-white/[0.07] bg-black/20 px-4 py-3">
         <span className="text-sm text-muted-foreground">Outstanding</span>
         <span className="text-sm font-semibold text-foreground">$10,000</span>
       </div>
@@ -434,7 +398,7 @@ function InvoicesPanel({ active }: { active: boolean }) {
 
 function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-white/[0.07] bg-black/15 p-3">
+    <div className="rounded-md border border-white/[0.07] bg-black/20 p-3">
       <p className="text-xs text-muted-foreground">{label}</p>
       <p className="mt-2 text-xl font-semibold text-foreground">{value}</p>
     </div>
@@ -452,19 +416,19 @@ function RecordLine({ label, value }: { label: string; value: string }) {
 
 function MilestoneLine({ label, state }: { label: string; state: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md border border-white/[0.07] bg-black/15 px-3 py-2.5">
+    <div className="flex items-center justify-between gap-3 rounded-md border border-white/[0.07] bg-black/20 px-3 py-2.5">
       <div className="flex min-w-0 items-center gap-2">
         <Clock3 className="h-4 w-4 shrink-0 text-muted-foreground" />
         <span className="truncate text-sm text-foreground">{label}</span>
       </div>
-      <Badge variant={state === "Client" ? "info" : "neutral"}>{state}</Badge>
+      <Badge variant={state === "Client" ? "info" : "neutral"} className="scale-90">{state}</Badge>
     </div>
   );
 }
 
 function TaskLine({ label, state }: { label: string; state: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-md border border-white/[0.07] bg-black/15 px-3 py-2.5">
+    <div className="flex items-center justify-between gap-3 rounded-md border border-white/[0.07] bg-black/20 px-3 py-2.5">
       <div className="flex min-w-0 items-center gap-2">
         <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
         <span className="truncate text-sm text-foreground">{label}</span>
@@ -473,6 +437,7 @@ function TaskLine({ label, state }: { label: string; state: string }) {
         variant={
           state === "Visible" ? "success" : state === "Private" ? "neutral" : "warning"
         }
+        className="scale-90"
       >
         {state}
       </Badge>
@@ -490,7 +455,7 @@ function InvoiceRow({
   state: string;
 }) {
   return (
-    <div className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-md border border-white/[0.07] bg-black/15 px-3 py-2.5">
+    <div className="grid grid-cols-[1fr_auto] items-center gap-3 rounded-md border border-white/[0.07] bg-black/20 px-3 py-2.5">
       <div className="flex min-w-0 items-center gap-2">
         <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
         <div className="min-w-0">
@@ -504,6 +469,7 @@ function InvoiceRow({
         variant={
           state === "Paid" ? "success" : state === "Overdue" ? "danger" : "warning"
         }
+        className="scale-90"
       >
         {state}
       </Badge>

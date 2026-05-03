@@ -7,6 +7,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { BentoCard } from "@/components/marketing/bento-card";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { ProductModules } from "@/components/marketing/product-modules";
 import { ProductPreview } from "@/components/marketing/product-preview";
@@ -136,31 +137,28 @@ function WorkflowSection() {
       id="workflow"
       className="scroll-mt-28 border-b border-white/[0.055] px-5 py-20 sm:px-8 lg:px-10 lg:py-24"
     >
-      <ScrollReveal className="mx-auto grid max-w-[1320px] gap-14 lg:grid-cols-[0.8fr_1.2fr]">
-        <div>
+      <ScrollReveal className="mx-auto max-w-[1320px]">
+        <div className="max-w-2xl">
           <p className="text-sm font-medium text-muted-foreground">Workflow</p>
           <h2 className="mt-5 text-3xl font-medium leading-[1.08] text-foreground sm:text-4xl lg:text-5xl">
             From internal work to client visibility.
           </h2>
         </div>
-        <div className="space-y-4">
+        <div className="mt-14 grid gap-4 lg:grid-cols-3">
           {workflow.map((item) => (
-            <div
-              key={item.step}
-              className="grid gap-5 border-t border-white/[0.075] pt-6 sm:grid-cols-[92px_1fr]"
-            >
-              <span className="font-mono text-sm text-muted-foreground">
+            <BentoCard key={item.step} className="flex flex-col justify-between p-8">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/[0.075] bg-white/[0.025] font-mono text-sm text-muted-foreground">
                 {item.step}
               </span>
-              <div>
+              <div className="mt-8">
                 <h3 className="text-xl font-semibold text-foreground">
                   {item.title}
                 </h3>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
                   {item.description}
                 </p>
               </div>
-            </div>
+            </BentoCard>
           ))}
         </div>
       </ScrollReveal>
@@ -188,18 +186,20 @@ function ClientPortalSection() {
           </p>
         </div>
 
-        <div className="rounded-lg border border-white/[0.09] bg-white/[0.025] shadow-[0_24px_90px_rgba(0,0,0,0.28)]">
-          <div className="flex items-center justify-between border-b border-white/[0.075] p-5">
-            <div>
-              <p className="text-sm font-semibold text-foreground">
+        <div className="[perspective:2000px]">
+          <BentoCard glowSize={800} className="group overflow-hidden rounded-[20px] border border-white/[0.08] bg-black shadow-[0_32px_100px_rgba(0,0,0,0.6)] transition-all duration-700 ease-out origin-top [transform:rotateX(8deg)_translateY(-20px)] hover:[transform:rotateX(0deg)_translateY(0px)]">
+            <div className="flex items-center justify-between border-b border-white/[0.075] bg-white/[0.02] px-4 py-3">
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-white/20" />
+                <span className="h-3 w-3 rounded-full bg-white/20" />
+                <span className="h-3 w-3 rounded-full bg-white/20" />
+              </div>
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                 Acme Studio Portal
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Scoped client workspace
-              </p>
+              </div>
+              <Badge variant="success" className="scale-90">Visible to client</Badge>
             </div>
-            <Badge variant="success">Visible to client</Badge>
-          </div>
+            <div className="bg-[#0b0c0d]">
           <div className="grid gap-0 sm:grid-cols-3">
             <ClientPortalMetric label="Projects" value="1" />
             <ClientPortalMetric label="Open tasks" value="3" />
@@ -224,8 +224,10 @@ function ClientPortalSection() {
                 <PortalChecklistItem label="Wireframes reviewed" />
                 <PortalChecklistItem label="Invoice sent" />
               </div>
+              </div>
             </div>
           </div>
+        </BentoCard>
         </div>
       </ScrollReveal>
     </section>
@@ -284,11 +286,11 @@ function WorkspacePanel({
   badge: string;
 }) {
   return (
-    <div className="group rounded-lg border border-white/[0.075] bg-white/[0.025] transition-[background-color,border-color] duration-200 hover:border-white/[0.14] hover:bg-white/[0.04]">
-      <div className="flex items-start justify-between gap-4 border-b border-white/[0.075] p-6">
+    <BentoCard className="flex flex-col" glowSize={1000}>
+      <div className="flex items-start justify-between gap-4 border-b border-white/[0.075] p-6 sm:p-8">
         <div>
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/[0.075] bg-black/15 text-muted-foreground transition-[background-color,border-color,color] duration-200 group-hover:border-white/[0.14] group-hover:bg-white/[0.05] group-hover:text-info">
+            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/[0.075] bg-black/15 text-muted-foreground transition-[color] duration-200 group-hover:text-info">
               <Icon className="h-4 w-4" aria-hidden="true" />
             </span>
             <p className="text-sm font-medium text-muted-foreground">{label}</p>
@@ -304,11 +306,11 @@ function WorkspacePanel({
           {badge}
         </Badge>
       </div>
-      <div>
+      <div className="flex-1 p-2">
         {items.map((item) => (
           <div
             key={item}
-            className="flex items-center gap-3 border-b border-white/[0.06] px-6 py-4 text-sm text-muted-foreground last:border-b-0"
+            className="flex items-center gap-3 border-b border-white/[0.06] px-4 sm:px-6 py-4 text-sm text-muted-foreground last:border-b-0"
           >
             <CheckCircle2
               className="h-4 w-4 shrink-0 text-success"
@@ -318,7 +320,7 @@ function WorkspacePanel({
           </div>
         ))}
       </div>
-    </div>
+    </BentoCard>
   );
 }
 
