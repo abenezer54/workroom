@@ -70,6 +70,21 @@ func (h *AuthHandler) Google(c *gin.Context) {
 	response.OK(c, result)
 }
 
+func (h *AuthHandler) VerifyEmail(c *gin.Context) {
+	var req dto.VerifyEmailRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		respondValidationError(c, err)
+		return
+	}
+
+	if err := h.auth.VerifyEmail(req.Token); err != nil {
+		respondAppError(c, err)
+		return
+	}
+
+	response.OK(c, gin.H{"message": "Email verified successfully"})
+}
+
 func (h *AuthHandler) Me(c *gin.Context) {
 	userID, ok := c.Get("user_id")
 	if !ok {

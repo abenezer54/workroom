@@ -25,7 +25,7 @@ func TestGoogleSignUpCreatesAgencyAdmin(t *testing.T) {
 			EmailVerified: true,
 		},
 	}
-	service := NewAuthService(repo, NewJWTService("test-secret", time.Hour), verifier, "google-client-id")
+	service := NewAuthService(repo, NewJWTService("test-secret", time.Hour), verifier, &fakeMailService{}, "google-client-id", "http://localhost:3000")
 
 	result, err := service.GoogleSignIn(context.Background(), dto.GoogleAuthRequest{
 		Credential: "google-credential",
@@ -83,7 +83,9 @@ func TestGoogleLoginLinksExistingEmailAccount(t *testing.T) {
 				EmailVerified: true,
 			},
 		},
+		&fakeMailService{},
 		"google-client-id",
+		"http://localhost:3000",
 	)
 
 	result, err := service.GoogleSignIn(context.Background(), dto.GoogleAuthRequest{
@@ -118,7 +120,9 @@ func TestGoogleLoginDoesNotCreateUnknownAccount(t *testing.T) {
 				EmailVerified: true,
 			},
 		},
+		&fakeMailService{},
 		"google-client-id",
+		"http://localhost:3000",
 	)
 
 	_, err := service.GoogleSignIn(context.Background(), dto.GoogleAuthRequest{
@@ -153,7 +157,9 @@ func TestGoogleRegisterRejectsExistingEmailAccount(t *testing.T) {
 				EmailVerified: true,
 			},
 		},
+		&fakeMailService{},
 		"google-client-id",
+		"http://localhost:3000",
 	)
 
 	_, err := service.GoogleSignIn(context.Background(), dto.GoogleAuthRequest{
@@ -179,7 +185,9 @@ func TestGoogleSignInRejectsUnverifiedEmail(t *testing.T) {
 				EmailVerified: false,
 			},
 		},
+		&fakeMailService{},
 		"google-client-id",
+		"http://localhost:3000",
 	)
 
 	_, err := service.GoogleSignIn(context.Background(), dto.GoogleAuthRequest{
@@ -210,7 +218,9 @@ func TestGoogleSignInRejectsMismatchedGoogleSubject(t *testing.T) {
 				EmailVerified: true,
 			},
 		},
+		&fakeMailService{},
 		"google-client-id",
+		"http://localhost:3000",
 	)
 
 	_, err := service.GoogleSignIn(context.Background(), dto.GoogleAuthRequest{
@@ -225,6 +235,12 @@ type fakeGoogleVerifier struct {
 	err        error
 	credential string
 	audience   string
+}
+
+type fakeMailService struct{}
+
+func (s *fakeMailService) SendVerificationEmail(toEmail, verificationLink string) error {
+	return nil
 }
 
 func (v *fakeGoogleVerifier) Verify(ctx context.Context, credential string, audience string) (*GoogleIdentity, error) {
@@ -318,6 +334,15 @@ func (r *fakeUserRepository) UpdateLastLoginAt(userID uuid.UUID, loggedInAt time
 		return nil
 	}
 	user.LastLoginAt = &loggedInAt
+	return nil
+}
+
+func (r *fakeUserRepository) UpdateEmailVerified(userID uuid.UUID) error {
+	user := r.usersByID[userID]
+	if user == nil {
+		return nil
+	}
+	user.IsEmailVerified = true
 	return nil
 }
 

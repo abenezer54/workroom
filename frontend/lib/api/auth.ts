@@ -34,8 +34,15 @@ export function googleSignIn(request: GoogleAuthRequest) {
 }
 
 export function me(token?: string | null) {
-  return apiClient<CurrentUser>("/auth/me", {
-    method: "GET",
-    token,
-  });
+	return apiClient<CurrentUser>("/auth/me", {
+		method: "GET",
+		token,
+	});
+}
+
+export function verifyEmail(token: string) {
+	return apiClient<{ message: string }>("/auth/verify-email", {
+		method: "POST",
+		body: { token },
+	});
 }

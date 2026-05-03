@@ -24,6 +24,10 @@ type GoogleAuthRequest struct {
 	Mode       string `json:"mode" binding:"required,oneof=login register"`
 }
 
+type VerifyEmailRequest struct {
+	Token string `json:"token" binding:"required"`
+}
+
 type AuthResponse struct {
 	User        UserResponse `json:"user"`
 	AccessToken string       `json:"access_token"`

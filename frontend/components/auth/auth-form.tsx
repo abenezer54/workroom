@@ -35,6 +35,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   const { isLoading, setSession, user } = useAuth();
   const isLogin = mode === "login";
   const [googleError, setGoogleError] = useState<string | null>(null);
+  const [isRegistered, setIsRegistered] = useState(false);
 
   const loginForm = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -61,6 +62,10 @@ export function AuthForm({ mode }: AuthFormProps) {
   }, [isLoading, router, user]);
 
   function completeAuth(session: AuthResponse) {
+    if (!session.access_token) {
+      setIsRegistered(true);
+      return;
+    }
     setSession(session);
     router.replace(dashboardPathForRole(session.user.role));
   }
@@ -113,17 +118,6 @@ export function AuthForm({ mode }: AuthFormProps) {
     setGoogleError(message);
   }, []);
 
-  function fillDemoAccount(email: string) {
-    loginForm.setValue("email", email, {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-    loginForm.setValue("password", "password123", {
-      shouldDirty: true,
-      shouldValidate: true,
-    });
-  }
-
   if (!isLoading && user) {
     return (
       <Card>
@@ -131,6 +125,50 @@ export function AuthForm({ mode }: AuthFormProps) {
           <p className="text-sm text-muted-foreground">
             Redirecting to your workspace...
           </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isRegistered) {
+    return (
+      <Card className="border border-white/10 bg-[#0a0a0a] shadow-2xl rounded-xl">
+        <CardContent className="space-y-5 p-7 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-4">
+            <svg
+              className="h-6 w-6 text-primary"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-foreground">Check your email</h3>
+          <p className="text-sm text-muted-foreground">
+            We've sent a verification link to{" "}
+            <span className="font-medium text-foreground">
+              {registerForm.getValues().email}
+            </span>
+            . Please check your inbox to verify your account.
+          </p>
+          <div className="pt-4">
+            <Button
+              variant="outline"
+              className="w-full h-11 bg-transparent border-white/10 text-foreground hover:bg-white/5"
+              onClick={() => {
+                setIsRegistered(false);
+                router.push("/login");
+              }}
+            >
+              Return to log in
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -258,35 +296,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           </Button>
         </form>
 
-        {isLogin ? (
-          <div className="mt-2 rounded-lg border border-white/10 bg-[#08090a] p-4">
-            <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
-              Demo accounts
-            </p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="h-10 bg-[#121314] hover:bg-[#1a1b1c] border-white/10 text-foreground transition-none shadow-none"
-                disabled={isPending}
-                onClick={() => fillDemoAccount("admin@workroom.demo")}
-              >
-                Admin demo
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="h-10 bg-[#121314] hover:bg-[#1a1b1c] border-white/10 text-foreground transition-none shadow-none"
-                disabled={isPending}
-                onClick={() => fillDemoAccount("client@workroom.demo")}
-              >
-                Client demo
-              </Button>
-            </div>
-          </div>
-        ) : (
+        {!isLogin && (
           <p className="rounded-md border border-info-border bg-info-soft p-3 text-xs leading-5 text-info">
             Registration creates an agency admin account. Client users are
             managed from the agency workspace in a later feature phase.

@@ -14,5 +14,6 @@ func RegisterAuthRoutes(api *gin.RouterGroup, handler *handlers.AuthHandler, jwt
 	auth.POST("/register", handler.Register)
 	auth.POST("/login", handler.Login)
 	auth.POST("/google", handler.Google)
+	auth.POST("/verify-email", handler.VerifyEmail)
 	auth.GET("/me", middleware.Auth(jwtService), middleware.RequireRole(models.RoleAgencyAdmin, models.RoleClient), handler.Me)
 }

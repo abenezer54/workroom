@@ -17,6 +17,9 @@ type Config struct {
 	JWTExpiresIn       time.Duration
 	CORSAllowedOrigins []string
 	GoogleClientID     string
+	ResendAPIKey       string
+	EmailFrom          string
+	FrontendURL        string
 }
 
 func Load() Config {
@@ -32,6 +35,9 @@ func Load() Config {
 		JWTExpiresIn:       getDurationEnv("JWT_EXPIRES_IN", 24*time.Hour),
 		CORSAllowedOrigins: splitCSV(getEnv("CORS_ALLOWED_ORIGINS", "http://localhost:3000")),
 		GoogleClientID:     getEnv("GOOGLE_CLIENT_ID", ""),
+		ResendAPIKey:       getEnv("RESEND_API_KEY", ""),
+		EmailFrom:          getEnv("EMAIL_FROM", "Workroom <noreply@workroom.demo>"),
+		FrontendURL:        getEnv("FRONTEND_URL", "http://localhost:3000"),
 	}
 }
 

@@ -23,6 +23,7 @@ type User struct {
 	GoogleSubject *string       `gorm:"type:text;index" json:"-"`
 	Role         UserRole       `gorm:"type:user_role;not null" json:"role"`
 	ClientID     *uuid.UUID     `gorm:"type:uuid;index" json:"client_id,omitempty"`
+	IsEmailVerified bool        `gorm:"not null;default:false" json:"is_email_verified"`
 	IsActive     bool           `gorm:"not null;default:true" json:"is_active"`
 	LastLoginAt  *time.Time     `gorm:"type:timestamptz" json:"last_login_at,omitempty"`
 	CreatedAt    time.Time      `gorm:"type:timestamptz;not null" json:"created_at"`

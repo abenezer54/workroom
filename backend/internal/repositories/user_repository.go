@@ -20,6 +20,7 @@ type UserRepository interface {
 	UpdateAgencyID(userID uuid.UUID, agencyID uuid.UUID) error
 	UpdateGoogleSubject(userID uuid.UUID, subject string) error
 	UpdateLastLoginAt(userID uuid.UUID, loggedInAt time.Time) error
+	UpdateEmailVerified(userID uuid.UUID) error
 }
 
 type userRepository struct {
@@ -90,6 +91,10 @@ func (r *userRepository) UpdateGoogleSubject(userID uuid.UUID, subject string) e
 
 func (r *userRepository) UpdateLastLoginAt(userID uuid.UUID, loggedInAt time.Time) error {
 	return r.db.Model(&models.User{}).Where("id = ?", userID).Update("last_login_at", loggedInAt).Error
+}
+
+func (r *userRepository) UpdateEmailVerified(userID uuid.UUID) error {
+	return r.db.Model(&models.User{}).Where("id = ?", userID).Update("is_email_verified", true).Error
 }
 
 func normalizeEmail(email string) string {

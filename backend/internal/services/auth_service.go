@@ -19,21 +19,26 @@ type AuthService interface {
 	Login(req dto.LoginRequest) (*dto.AuthResponse, error)
 	GoogleSignIn(ctx context.Context, req dto.GoogleAuthRequest) (*dto.AuthResponse, error)
 	CurrentUser(userID uuid.UUID) (*dto.UserResponse, error)
+	VerifyEmail(token string) error
 }
 
 type authService struct {
 	users          repositories.UserRepository
 	jwt            JWTService
 	googleVerifier GoogleTokenVerifier
+	mailService    MailService
 	googleClientID string
+	frontendURL    string
 }
 
-func NewAuthService(users repositories.UserRepository, jwt JWTService, googleVerifier GoogleTokenVerifier, googleClientID string) AuthService {
+func NewAuthService(users repositories.UserRepository, jwt JWTService, googleVerifier GoogleTokenVerifier, mailService MailService, googleClientID, frontendURL string) AuthService {
 	return &authService{
 		users:          users,
 		jwt:            jwt,
 		googleVerifier: googleVerifier,
+		mailService:    mailService,
 		googleClientID: strings.TrimSpace(googleClientID),
+		frontendURL:    strings.TrimRight(frontendURL, "/"),
 	}
 }
 
@@ -70,14 +75,19 @@ func (s *authService) RegisterAgencyAdmin(req dto.RegisterRequest) (*dto.AuthRes
 	}
 	user.AgencyID = &user.ID
 
-	token, err := s.jwt.Generate(*user)
+	token, err := s.jwt.GenerateVerificationToken(user.ID)
 	if err != nil {
-		return nil, apperrors.Internal("Could not create access token")
+		return nil, apperrors.Internal("Could not generate verification token")
+	}
+
+	verificationLink := s.frontendURL + "/verify-email?token=" + token
+	if err := s.mailService.SendVerificationEmail(user.Email, verificationLink); err != nil {
+		return nil, apperrors.Internal("Account created but failed to send verification email. Please contact support.")
 	}
 
 	return &dto.AuthResponse{
 		User:        dto.ToUserResponse(*user),
-		AccessToken: token,
+		AccessToken: "", // Empty token, requiring them to verify email first
 	}, nil
 }
 
@@ -92,6 +102,10 @@ func (s *authService) Login(req dto.LoginRequest) (*dto.AuthResponse, error) {
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
 		return nil, apperrors.Unauthorized("Invalid email or password")
+	}
+
+	if !user.IsEmailVerified {
+		return nil, apperrors.Forbidden("Please verify your email address to log in.")
 	}
 
 	if !user.IsActive {
@@ -181,6 +195,31 @@ func (s *authService) CurrentUser(userID uuid.UUID) (*dto.UserResponse, error) {
 	return &response, nil
 }
 
+func (s *authService) VerifyEmail(token string) error {
+	claims, err := s.jwt.ValidateVerificationToken(token)
+	if err != nil {
+		return apperrors.Unauthorized("Invalid or expired verification link")
+	}
+
+	user, err := s.users.FindByID(claims.UserID)
+	if err != nil {
+		return apperrors.Internal("Could not process verification")
+	}
+	if user == nil {
+		return apperrors.Unauthorized("User not found")
+	}
+
+	if user.IsEmailVerified {
+		return nil // Already verified
+	}
+
+	if err := s.users.UpdateEmailVerified(user.ID); err != nil {
+		return apperrors.Internal("Could not verify email")
+	}
+
+	return nil
+}
+
 func (s *authService) findOrCreateGoogleUser(identity *GoogleIdentity, mode string) (*models.User, error) {
 	user, err := s.users.FindByEmail(identity.Email)
 	if err != nil {
@@ -216,6 +255,7 @@ func (s *authService) findOrCreateGoogleUser(identity *GoogleIdentity, mode stri
 		PasswordHash:  "",
 		GoogleSubject: &subject,
 		Role:          models.RoleAgencyAdmin,
+		IsEmailVerified: true, // Google emails are already verified
 		IsActive:      true,
 	}
 
