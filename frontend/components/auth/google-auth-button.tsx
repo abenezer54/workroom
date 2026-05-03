@@ -84,7 +84,7 @@ export function GoogleAuthButton({
 
   if (!googleClientID || isUnavailable) {
     return (
-      <Button className="w-full" type="button" variant="secondary" disabled>
+      <Button className="w-full h-11 shadow-sm" type="button" variant="secondary" disabled>
         {googleActionLabel} unavailable
       </Button>
     );
@@ -92,8 +92,8 @@ export function GoogleAuthButton({
 
   if (isPending) {
     return (
-      <Button className="w-full" type="button" variant="secondary" disabled>
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+      <Button className="w-full h-11 shadow-sm" type="button" variant="secondary" disabled>
+        <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
         {mode === "login" ? "Continuing with Google" : "Creating account"}
       </Button>
     );
@@ -101,7 +101,7 @@ export function GoogleAuthButton({
 
   if (disabled) {
     return (
-      <Button className="w-full" type="button" variant="secondary" disabled>
+      <Button className="w-full h-11 shadow-sm" type="button" variant="secondary" disabled>
         Continue with Google
       </Button>
     );

@@ -137,8 +137,8 @@ export function AuthForm({ mode }: AuthFormProps) {
   }
 
   return (
-    <Card className="shadow-[0_12px_40px_rgba(0,0,0,0.46)]">
-      <CardContent className="space-y-5 p-5">
+    <Card className="border border-white/10 bg-[#0a0a0a] shadow-2xl rounded-xl">
+      <CardContent className="space-y-5 p-7">
         {error ? <ErrorState message={error} /> : null}
         <GoogleAuthButton
           mode={mode}
@@ -147,22 +147,23 @@ export function AuthForm({ mode }: AuthFormProps) {
           onCredential={handleGoogleCredential}
           onError={handleGoogleError}
         />
-        <div className="flex items-center gap-3">
-          <div className="h-px flex-1 bg-border" />
-          <span className="text-xs text-muted-foreground">or</span>
-          <div className="h-px flex-1 bg-border" />
+        <div className="flex items-center gap-4 py-2">
+          <div className="h-px flex-1 bg-white/10" />
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">or continue with email</span>
+          <div className="h-px flex-1 bg-white/10" />
         </div>
         <form
-          className="space-y-4"
+          className="space-y-5"
           onSubmit={isLogin ? submitLogin : submitRegister}
         >
           {!isLogin ? (
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name" className="text-foreground">Name</Label>
               <Input
                 id="name"
                 autoComplete="name"
                 disabled={isPending}
+                className="h-11 bg-background border-white/10 focus-visible:border-white/20 focus-visible:ring-white/10 transition-none"
                 {...registerForm.register("name")}
               />
               {registerForm.formState.errors.name ? (
@@ -174,12 +175,13 @@ export function AuthForm({ mode }: AuthFormProps) {
           ) : null}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-foreground">Email</Label>
             <Input
               id="email"
               type="email"
               autoComplete="email"
               disabled={isPending}
+              className="h-11 bg-background border-white/10 focus-visible:border-white/20 focus-visible:ring-white/10 transition-none"
               {...(isLogin
                 ? loginForm.register("email")
                 : registerForm.register("email"))}
@@ -197,12 +199,13 @@ export function AuthForm({ mode }: AuthFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-foreground">Password</Label>
             <Input
               id="password"
               type="password"
               autoComplete={isLogin ? "current-password" : "new-password"}
               disabled={isPending}
+              className="h-11 bg-background border-white/10 focus-visible:border-white/20 focus-visible:ring-white/10 transition-none"
               {...(isLogin
                 ? loginForm.register("password")
                 : registerForm.register("password"))}
@@ -221,12 +224,13 @@ export function AuthForm({ mode }: AuthFormProps) {
 
           {!isLogin ? (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Label htmlFor="confirmPassword" className="text-foreground">Confirm password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 autoComplete="new-password"
                 disabled={isPending}
+                className="h-11 bg-background border-white/10 focus-visible:border-white/20 focus-visible:ring-white/10 transition-none"
                 {...registerForm.register("confirmPassword")}
               />
               {registerForm.formState.errors.confirmPassword ? (
@@ -237,9 +241,9 @@ export function AuthForm({ mode }: AuthFormProps) {
             </div>
           ) : null}
 
-          <Button className="w-full" type="submit" disabled={isPending}>
+          <Button className="w-full h-11 text-base font-medium bg-[#f7f8f8] text-black hover:bg-[#d0d6e0] border-transparent" type="submit" disabled={isPending}>
             {isEmailPending ? (
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+              <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
             ) : null}
             {isLogin
               ? isEmailPending
@@ -249,21 +253,22 @@ export function AuthForm({ mode }: AuthFormProps) {
                 ? "Creating account"
                 : "Create account"}
             {!isEmailPending ? (
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <ArrowRight className="h-5 w-5 ml-1" aria-hidden="true" />
             ) : null}
           </Button>
         </form>
 
         {isLogin ? (
-          <div className="wr-panel rounded-md border border-border bg-muted/70 p-3">
-            <p className="text-xs font-medium text-foreground">
+          <div className="mt-2 rounded-lg border border-white/10 bg-[#08090a] p-4">
+            <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">
               Demo accounts
             </p>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Button
                 type="button"
                 variant="secondary"
                 size="sm"
+                className="h-10 bg-[#121314] hover:bg-[#1a1b1c] border-white/10 text-foreground transition-none shadow-none"
                 disabled={isPending}
                 onClick={() => fillDemoAccount("admin@workroom.demo")}
               >
@@ -273,6 +278,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 type="button"
                 variant="secondary"
                 size="sm"
+                className="h-10 bg-[#121314] hover:bg-[#1a1b1c] border-white/10 text-foreground transition-none shadow-none"
                 disabled={isPending}
                 onClick={() => fillDemoAccount("client@workroom.demo")}
               >
